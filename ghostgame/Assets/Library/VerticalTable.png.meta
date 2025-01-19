@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: be504e600fd6d304da7c86b282c1f565
+guid: 436c59ec8364a6244941c52096cd3017
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -4431752811619699872
-    second: VerticalTable_0
+      213: 768605624109273300
+    second: VerticalTable-export_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -75,7 +75,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -100,7 +100,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: VerticalTable_0
+      name: VerticalTable-export_0
       rect:
         serializedVersion: 2
         x: 0
@@ -115,14 +115,36 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 063b11b5c404f72c0800000000000000
-      internalID: -4431752811619699872
+      spriteID: 4d0966d2eb2aaaa00800000000000000
+      internalID: 768605624109273300
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: VerticalTable_1
+      name: VerticalTable-export_1
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 32
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 01a36961d29f22b49bdfc7ba9369b45f
+      internalID: -714669223
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VerticalTable-export_2
       rect:
         serializedVersion: 2
         x: 0
@@ -137,14 +159,36 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3a2d30e5cbb164c4199f00eac6f3e901
-      internalID: 1091936826
+      spriteID: cab1ae0b80fb397499ae2f9f84ebf105
+      internalID: 1870202449
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: VerticalTable_2
+      name: VerticalTable-export_3
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 16
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 039c21bf899b9b840a0cca9d5285f915
+      internalID: 945326701
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VerticalTable-export_4
       rect:
         serializedVersion: 2
         x: 0
@@ -159,8 +203,30 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b998b98168762444aa66b3b29a9836b4
-      internalID: -1944818358
+      spriteID: 81d1e3e312e0aab4dac0f46467637772
+      internalID: 1547265342
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VerticalTable-export_5
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 0
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9872491263d84f143980417782d4e557
+      internalID: 963487180
       vertices: []
       indices: 
       edges: []
@@ -169,7 +235,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 475e343a674c84941971b6b010204225
+    spriteID: 21cf19b541a3fc14f8b2c3c5be42ede1
     internalID: 0
     vertices: []
     indices: 
@@ -179,9 +245,12 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      VerticalTable_0: -4431752811619699872
-      VerticalTable_1: 1091936826
-      VerticalTable_2: -1944818358
+      VerticalTable-export_0: 768605624109273300
+      VerticalTable-export_1: -714669223
+      VerticalTable-export_2: 1870202449
+      VerticalTable-export_3: 945326701
+      VerticalTable-export_4: 1547265342
+      VerticalTable-export_5: 963487180
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
