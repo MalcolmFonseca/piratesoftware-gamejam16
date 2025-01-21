@@ -71,6 +71,8 @@ public class PlayerMovement : MonoBehaviour
     private void Interact(InputAction.CallbackContext context)
     {
         anim.SetTrigger("interact");
+
+        // Interactable environment objects subscribe to this event
         OnInteract?.Invoke(this);
     }
 }
