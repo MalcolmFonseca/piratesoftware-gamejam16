@@ -7,16 +7,23 @@ public class CandleTrigger : MonoBehaviour
     private void Awake()
     {
         controller = GetComponent<CandleController>();
+        controller.enabled = false;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        controller.enabled = true;
+        if (collision.gameObject.tag == "Player")
+        {
+            controller.enabled = true;
+        }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        controller.enabled = false;
+        if (collision.gameObject.tag == "Player")
+        {
+            controller.enabled = false;
+        }
     }
 
 }

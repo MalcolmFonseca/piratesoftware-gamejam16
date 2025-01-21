@@ -4,14 +4,15 @@ using UnityEngine.Rendering.Universal;
 
 public class CandleController : MonoBehaviour
 {
-
     Light2D light;
     Animator anim;
+
 
     private void Awake()
     {
         anim = GetComponent<Animator>();
         light = GetComponent<Light2D>();
+        this.enabled = false;
     }
 
     private void OnEnable()
