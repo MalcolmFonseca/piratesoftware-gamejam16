@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 8717824144965309684}
   m_Layer: 0
   m_Name: TableCandle
-  m_TagString: Untagged
+  m_TagString: Candle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
