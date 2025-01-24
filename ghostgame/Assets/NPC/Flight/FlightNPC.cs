@@ -10,7 +10,7 @@ public class FlightNPC : MonoBehaviour
 
     //Pathfinding
     private AIPath path;
-    private float moveSpeed = 20;
+    private float moveSpeed = 2;
     public Transform target;
 
     private void Start()
