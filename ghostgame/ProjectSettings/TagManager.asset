@@ -51,11 +51,11 @@ TagManager:
   - name: Collisions
     uniqueID: 1407335149
     locked: 0
-  - name: Invisible
-    uniqueID: 3161228011
-    locked: 0
   - name: WalkBehind
     uniqueID: 4255051435
+    locked: 0
+  - name: Invisible
+    uniqueID: 3161228011
     locked: 0
   m_RenderingLayers:
   - Default

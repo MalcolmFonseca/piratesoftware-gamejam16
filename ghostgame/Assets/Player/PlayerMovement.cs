@@ -129,6 +129,7 @@ public class PlayerMovement : MonoBehaviour
             spriteRenderer.color = color;
             boxCollider2d.enabled = true;       // turn on collisions
             triggerCollider.enabled = false;    // turn off trigger
+            spriteRenderer.sortingLayerName = "Collisions";
         } else
         {
             isInvisible = true;
@@ -136,6 +137,7 @@ public class PlayerMovement : MonoBehaviour
             spriteRenderer.color = color;
             boxCollider2d.enabled = false;      // turn off collisions
             triggerCollider.enabled = true;     // turn on trigger
+            spriteRenderer.sortingLayerName = "Invisible";
         }
     }
 
