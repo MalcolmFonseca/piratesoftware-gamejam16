@@ -6,29 +6,31 @@ public class CandleController : MonoBehaviour
 {
     Light2D light;
     Animator anim;
-
+    public int id;
 
     private void Awake()
     {
         anim = GetComponent<Animator>();
         light = GetComponent<Light2D>();
-        this.enabled = false;
     }
 
     private void OnEnable()
     {
-        PlayerMovement.OnInteract += ToggleLight;
+        GameEvents.instance.onInteract += ToggleLight;
     }
 
     private void OnDisable()
     {
-        PlayerMovement.OnInteract -= ToggleLight;
+        GameEvents.instance.onInteract -= ToggleLight;
     }
 
-    private void ToggleLight(PlayerMovement player)
+    private void ToggleLight(GameObject gameObject)
     {
-        light.enabled = !light.enabled;
-        anim.SetBool("isFlame", light.enabled);
+        if (gameObject == this.gameObject)
+        {
+            light.enabled = !light.enabled;
+            anim.SetBool("isFlame", light.enabled);
+        }
     }
 
 }
