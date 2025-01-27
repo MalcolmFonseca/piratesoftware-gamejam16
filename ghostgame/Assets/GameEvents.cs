@@ -15,4 +15,10 @@ public class GameEvents : MonoBehaviour
     {
         onInteract?.Invoke(gameObject);
     }
+
+    public event Action<float> onStartCooldown;
+    public void StartCooldown(float timer) 
+    { 
+        onStartCooldown?.Invoke(timer);
+    }
 }

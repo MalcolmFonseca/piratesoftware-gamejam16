@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -6,12 +7,14 @@ public class PlayerMovement : MonoBehaviour
 {
     // Interact Event parameter set by trigger
     GameObject interactableObject;
+    bool onCooldown = false;
+    bool invisCooldown = false;
 
     // Movement
     public InputSystem_Actions inputControls;
     InputAction moveAction;
     Vector2 move;
-    Vector2 moveDirection = new Vector2 (0, 0);
+    Vector2 moveDirection = new Vector2(0, 0);
     [SerializeField]
     float moveSpeed;
     Rigidbody2D rigidBody2d;
@@ -33,11 +36,16 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     BoxCollider2D boxCollider2d;
     [SerializeField]
-    BoxCollider2D triggerCollider;
+    //BoxCollider2D triggerCollider;
     SpriteRenderer spriteRenderer;
     bool isInvisible;
-    bool inWall;
+    LayerMask wallLayer;
+    [SerializeField]
+    float checkRadius;
 
+
+
+    // ----------------- Setup ------------------------------
     void Awake()
     {
         // Components and Movement
@@ -52,7 +60,7 @@ public class PlayerMovement : MonoBehaviour
         yMin = minBoundaryObj.transform.position.y;
         // invisibility
         isInvisible = false;
-        inWall = false;
+        wallLayer = LayerMask.GetMask("Obstacle");
     }
 
     private void OnEnable()
@@ -67,7 +75,7 @@ public class PlayerMovement : MonoBehaviour
         // Invisibility 'Q'
         invisibility = inputControls.Player.Ability;
         invisibility.Enable();
-        invisibility.performed += Invisibility;
+        invisibility.performed += Ability;
     }
 
     private void OnDisable()
@@ -76,7 +84,7 @@ public class PlayerMovement : MonoBehaviour
         interact.performed -= Interact;
         interact.Disable();
         // Invisibility 'Q'
-        invisibility.performed -= Invisibility;
+        invisibility.performed -= Ability;
         invisibility.Disable();
         // Movement
         moveAction.Disable();
@@ -86,17 +94,18 @@ public class PlayerMovement : MonoBehaviour
     {
         // Movement
         move = moveAction.ReadValue<Vector2>();
-        if(!Mathf.Approximately(move.x, 0.0f) || !Mathf.Approximately(move.y, 0.0f))
+        if (!Mathf.Approximately(move.x, 0.0f) || !Mathf.Approximately(move.y, 0.0f))
         {
             moveDirection.Set(move.x, move.y);
             moveDirection.Normalize();
         }
 
         // Animation Direction
-        if (moveDirection.x > 0.0f) 
+        if (moveDirection.x > 0.0f)
         {
             spriteRenderer.flipX = true;
-        } else if (moveDirection.x < 0.0f)
+        }
+        else if (moveDirection.x < 0.0f)
         {
             spriteRenderer.flipX = false;
         }
@@ -105,54 +114,140 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+
         // Boundary restrictions based on empty object placements
         Vector2 position = new Vector2(
             Mathf.Clamp(rigidBody2d.position.x + move.x * moveSpeed * Time.deltaTime, xMin, xMax),
             Mathf.Clamp(rigidBody2d.position.y + move.y * moveSpeed * Time.deltaTime, yMin, yMax)
             );
         rigidBody2d.MovePosition(position);
+
     }
 
-    // Interact Event 'E'
+
+
+    // ----------------------- Interact Event 'E' ------------------------
     private void Interact(InputAction.CallbackContext context)
     {
-        anim.SetTrigger("interact");
-
-        // Call interact event (in GameEvents)
-        if(interactableObject != null)
+        if (!isInvisible && interactableObject != null && !onCooldown)
         {
             GameEvents.instance.Interact(interactableObject);
+            anim.SetTrigger("interact");
+            onCooldown = true;
+            StartCoroutine(InteractCooldown(5));
+        }
+    }
+    IEnumerator InteractCooldown(float timer)
+    {
+        yield return new WaitForSeconds(timer);
+        onCooldown = false;
+    }
+
+    // Sets interactableObject to be sent as the parameter for the event, to be checked by all interactable objects against themselves
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag == "Interact")
+        {
+            interactableObject = collision.gameObject;
+        }
+    }
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.tag == "Interact")
+        {
+            interactableObject = null;
         }
     }
 
 
 
-
-    /*
-        Invisibility requires ground collisions everywhere between the map rooms.
-        The ground collisions cannot use the composite collider for merged tiles
-            - the ghost has a trigger slightly larger than 1 tile and always needs
-              to witness a collision event when in the walls
-        Restricting the ghosts invisibility toggle ensures they don't get stuck in the wall
-     */
-
-
-    // Invisibility set to 'Q'
-    private void Invisibility(InputAction.CallbackContext context) 
+    // ----------------- Invisibility set to 'Q' -----------------------
+    private void Ability(InputAction.CallbackContext context)
     {
+        GoInvisible();
+    }
+    bool inWall()
+    {
+        return Physics2D.OverlapCircle(transform.position, checkRadius, wallLayer);
+    }
 
-        if (isInvisible && !inWall)
-        {
-            isInvisible = false;
-            TransparencyChange(1f);
-            ManageColliders(isInvisible);
-            spriteRenderer.sortingLayerName = "Collisions";
-        } else
+    private void GoInvisible()
+    {
+        if (!invisCooldown)
         {
             isInvisible = true;
             TransparencyChange(0.27f);
             ManageColliders(isInvisible);
             spriteRenderer.sortingLayerName = "Invisible";
+            invisCooldown = true;
+            StartCoroutine(InvisibilityCD());
+        }
+    }
+
+    private void RevokeInvisibility()
+    {
+        if (inWall())
+        {
+            MoveToMap();
+        }
+        isInvisible = false;
+        TransparencyChange(1f);
+        ManageColliders(isInvisible);
+        spriteRenderer.sortingLayerName = "Collisions";
+    }
+
+    private void MoveToMap()
+    {
+        // Try to find a nearby position where the player isn't colliding with a wall
+        Vector2 newPosition = transform.position;
+
+        // Check in several directions to find an open space
+        Vector2[] directions = { 
+            Vector2.up, 
+            Vector2.down, 
+            Vector2.left, 
+            Vector2.right,
+            Vector2.up + Vector2.right,
+            Vector2.up + Vector2.left,
+            Vector2.down + Vector2.right,
+            Vector2.down + Vector2.left,
+        };
+
+        float modifier = 0;
+        bool positionFound = false;
+
+        while (modifier < 10)
+        {
+
+            foreach (var dir in directions)
+            {
+                // check for a wall a specified distance away
+                bool inWall = Physics2D.OverlapCircle((Vector2)transform.position + (dir * modifier), 0.5f, wallLayer);
+
+                if (!inWall)
+                {
+                    newPosition = (Vector2)transform.position + dir * modifier;
+                    Vector2 clampedPosition = new Vector2(
+                        Mathf.Clamp(newPosition.x, xMin, xMax), 
+                        Mathf.Clamp(newPosition.y, yMin, yMax)
+                        );
+
+                    if (clampedPosition == newPosition)
+                    {
+                        positionFound = true;
+                        break;
+                    }
+                }
+            }
+
+            if (positionFound)
+            {
+                transform.position = newPosition;
+                break;
+            }
+
+            modifier += 0.25f;
+
         }
     }
 
@@ -165,37 +260,17 @@ public class PlayerMovement : MonoBehaviour
 
     private void ManageColliders(bool isInvisible)
     {
-        triggerCollider.enabled = isInvisible;
+        //triggerCollider.enabled = isInvisible;
         boxCollider2d.enabled = !isInvisible;
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    IEnumerator InvisibilityCD()
     {
-        if(collision.tag != "Interact")
-        {
-            inWall = true;
-        } else
-        {
-            interactableObject = collision.gameObject;
-        }
+        yield return new WaitForSeconds(2f);
+        RevokeInvisibility();
+        yield return new WaitUntil(() => !inWall());
+        yield return new WaitForSeconds(2f);
+        invisCooldown = false;
     }
 
-    private void OnTriggerStay2D(Collider2D collision)
-    {
-        if (collision.tag != "Interact")
-        {
-            inWall = true;
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if(collision.tag != "Interact")
-        {
-            inWall = false;
-        } else
-        {
-            interactableObject = null;
-        }
-    }
 }

@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - Interact
+  - Candle
   layers:
   - Default
   - TransparentFX
@@ -13,8 +14,8 @@ TagManager:
   - Water
   - UI
   - Obstacle
-  - 
-  - 
+  - Wall
+  - Ground
   - 
   - 
   - 
