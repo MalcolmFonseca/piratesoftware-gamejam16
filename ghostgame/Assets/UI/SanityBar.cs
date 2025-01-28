@@ -1,11 +1,10 @@
 using UnityEngine;
 using UnityEngine.UI;
-public class Guard : MonoBehaviour
-{
 
+public class SanityBar : MonoBehaviour
+{
     [SerializeField]
     private Slider slider;
-
 
 
 }

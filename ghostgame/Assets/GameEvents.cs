@@ -16,9 +16,15 @@ public class GameEvents : MonoBehaviour
         onInteract?.Invoke(gameObject);
     }
 
-    public event Action<float> onStartCooldown;
-    public void StartCooldown(float timer) 
-    { 
-        onStartCooldown?.Invoke(timer);
+    public event Action<float> onInvisibility;
+    public void StartInvisibility(float duration) 
+    {
+        onInvisibility?.Invoke(duration);
+    }
+
+    public event Action<float> onInvisibilityCooldown;
+    public void StartCooldown(float cooldown)
+    {
+        onInvisibilityCooldown?.Invoke(cooldown);
     }
 }

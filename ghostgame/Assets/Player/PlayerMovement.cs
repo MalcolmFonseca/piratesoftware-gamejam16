@@ -6,6 +6,13 @@ using UnityEngineInternal;
 
 public class PlayerMovement : MonoBehaviour
 {
+    
+    /*
+     
+        Collisions and ground collisions can't be merged with a composite collider, they need to be max 1 tile in size (tables need to have 4 seperate colliders)
+     
+     */
+
     // Interact Event parameter set by trigger
     GameObject interactableObject;
     bool onCooldown = false;
@@ -292,9 +299,13 @@ public class PlayerMovement : MonoBehaviour
 
     IEnumerator InvisibilityCD()
     {
+        // call duration event
+        GameEvents.instance.StartInvisibility(2f);
         yield return new WaitForSeconds(2f); // invisibility duration
         StartCoroutine(RevokeInvisibility());
         yield return new WaitUntil(() => !inWall());
+        // call cooldown event
+        GameEvents.instance.StartCooldown(2f);
         yield return new WaitForSeconds(2f);
         invisCooldown = false;
     }
