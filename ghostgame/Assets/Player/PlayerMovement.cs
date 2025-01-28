@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngineInternal;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -19,6 +20,7 @@ public class PlayerMovement : MonoBehaviour
     float moveSpeed;
     Rigidbody2D rigidBody2d;
     Animator anim;
+    bool canMove;
 
     // Ghost boundaries
     [SerializeField]
@@ -35,7 +37,7 @@ public class PlayerMovement : MonoBehaviour
     // Invisibility
     [SerializeField]
     BoxCollider2D boxCollider2d;
-    [SerializeField]
+    //[SerializeField]
     //BoxCollider2D triggerCollider;
     SpriteRenderer spriteRenderer;
     bool isInvisible;
@@ -61,6 +63,7 @@ public class PlayerMovement : MonoBehaviour
         // invisibility
         isInvisible = false;
         wallLayer = LayerMask.GetMask("Obstacle");
+        canMove = true;
     }
 
     private void OnEnable()
@@ -92,24 +95,27 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        // Movement
-        move = moveAction.ReadValue<Vector2>();
-        if (!Mathf.Approximately(move.x, 0.0f) || !Mathf.Approximately(move.y, 0.0f))
+        if (canMove)
         {
-            moveDirection.Set(move.x, move.y);
-            moveDirection.Normalize();
-        }
+            // Movement
+            move = moveAction.ReadValue<Vector2>();
+            if (!Mathf.Approximately(move.x, 0.0f) || !Mathf.Approximately(move.y, 0.0f))
+            {
+                moveDirection.Set(move.x, move.y);
+                moveDirection.Normalize();
+            }
 
-        // Animation Direction
-        if (moveDirection.x > 0.0f)
-        {
-            spriteRenderer.flipX = true;
+            // Animation Direction
+            if (moveDirection.x > 0.0f)
+            {
+                spriteRenderer.flipX = true;
+            }
+            else if (moveDirection.x < 0.0f)
+            {
+                spriteRenderer.flipX = false;
+            }
+            anim.SetFloat("speed", move.magnitude);
         }
-        else if (moveDirection.x < 0.0f)
-        {
-            spriteRenderer.flipX = false;
-        }
-        anim.SetFloat("speed", move.magnitude);
     }
 
     private void FixedUpdate()
@@ -184,19 +190,22 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void RevokeInvisibility()
+
+    IEnumerator RevokeInvisibility()
     {
         if (inWall())
         {
-            MoveToMap();
+            canMove = false;
+            FindPosition();
         }
+        yield return new WaitUntil(() => canMove);
         isInvisible = false;
         TransparencyChange(1f);
         ManageColliders(isInvisible);
         spriteRenderer.sortingLayerName = "Collisions";
     }
 
-    private void MoveToMap()
+    private void FindPosition()
     {
         // Try to find a nearby position where the player isn't colliding with a wall
         Vector2 newPosition = transform.position;
@@ -242,13 +251,30 @@ public class PlayerMovement : MonoBehaviour
 
             if (positionFound)
             {
-                transform.position = newPosition;
+                StartCoroutine(MoveToMap(newPosition));
                 break;
             }
 
             modifier += 0.25f;
 
         }
+    }
+
+    IEnumerator MoveToMap(Vector2 inMapPosition)
+    {
+        Vector2 startPosition = transform.position;
+        float duration = 0.25f;
+        float timePassed = 0;
+
+        while(timePassed < duration)
+        {
+            transform.position = Vector2.Lerp(startPosition, inMapPosition, timePassed / duration);
+            timePassed += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.position = inMapPosition;
+        canMove = true;
     }
 
     private void TransparencyChange(float transparency)
@@ -266,8 +292,8 @@ public class PlayerMovement : MonoBehaviour
 
     IEnumerator InvisibilityCD()
     {
-        yield return new WaitForSeconds(2f);
-        RevokeInvisibility();
+        yield return new WaitForSeconds(2f); // invisibility duration
+        StartCoroutine(RevokeInvisibility());
         yield return new WaitUntil(() => !inWall());
         yield return new WaitForSeconds(2f);
         invisCooldown = false;
