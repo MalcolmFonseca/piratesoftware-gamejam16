@@ -10,6 +10,8 @@ public class InteractCD : MonoBehaviour
     private Image imageCD;
     [SerializeField]
     private TMP_Text textCD;
+    [SerializeField]
+    private GameObject interactIcon;
 
     
 
@@ -18,14 +20,21 @@ public class InteractCD : MonoBehaviour
     {
         textCD.gameObject.SetActive(false);
         imageCD.fillAmount = 0;
+        interactIcon.SetActive(false);
         GameEvents.instance.onInteract += StartCooldown;
+        GameEvents.instance.onInRange += CanInteract;
+        GameEvents.instance.onOutOfRange += CannotInteract;
     }
 
     private void OnDestroy()
     {
         GameEvents.instance.onInteract -= StartCooldown;
+        GameEvents.instance.onInRange -= CanInteract;
+        GameEvents.instance.onOutOfRange -= CannotInteract;
+
     }
 
+    //--------------- Cooldown ----------------------------------------------
     void StartCooldown(GameObject gameObject)
     {
         StartCoroutine(Cooldown());
@@ -49,9 +58,18 @@ public class InteractCD : MonoBehaviour
 
         imageCD.fillAmount = 0;
         textCD.gameObject.SetActive(false);
-
     }
 
+    //--------------- Within Range of Interacting ----------------------------------------------
+    void CanInteract()
+    {
+        interactIcon.SetActive(true);
+    }
+
+    void CannotInteract()
+    {
+        interactIcon.SetActive(false);
+    }
 
 
 }

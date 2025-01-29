@@ -10,6 +10,8 @@ public class GameEvents : MonoBehaviour
         instance = this;
     }
 
+
+    //----------------------------------------------------------------------------------------------------------------------------------
     // Controls interact cooldown and tells what is being interacted with (called within player)
     public event Action<GameObject> onInteract;
     public void Interact(GameObject gameObject)
@@ -17,7 +19,20 @@ public class GameEvents : MonoBehaviour
         onInteract?.Invoke(gameObject);
     }
 
+    public event Action onInRange;
+    public void CanInteract()
+    {
+        onInRange?.Invoke();
+    }
 
+    public event Action onOutOfRange;
+    public void CannotInteract()
+    {
+        onOutOfRange?.Invoke();
+    }
+
+
+    //----------------------------------------------------------------------------------------------------------------------------------
     // Controls invisibility duration (called within player)
     public event Action<float> onInvisibility;
     public void StartInvisibility(float duration) 

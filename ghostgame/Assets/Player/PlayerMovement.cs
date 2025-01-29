@@ -192,6 +192,8 @@ public class PlayerMovement : MonoBehaviour
         if (collision.tag == "Interact")
         {
             interactableObject = collision.gameObject;
+            // can add event that instead of disappearing from ui, just adjusts the transparency of the icon part only
+            GameEvents.instance.CanInteract();
         }
     }
     private void OnTriggerExit2D(Collider2D collision)
@@ -199,6 +201,7 @@ public class PlayerMovement : MonoBehaviour
         if (collision.tag == "Interact")
         {
             interactableObject = null;
+            GameEvents.instance.CannotInteract();
         }
     }
 

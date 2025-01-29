@@ -15,6 +15,7 @@ public class GuardMove : MonoBehaviour
     Transform targetTwo;
     [SerializeField]
     Transform ghost;
+    Transform mostRecentDestination;
     Animator anim;
     SpriteRenderer spriteRenderer;
     public bool isAngry;
@@ -41,6 +42,8 @@ public class GuardMove : MonoBehaviour
     private void Start()
     {
         currentState = StateMachine.Patrol;
+        SetGuardDestination(targetOne);
+        mostRecentDestination = targetOne;
     }
 
 
@@ -91,16 +94,18 @@ public class GuardMove : MonoBehaviour
         // the destination resets off of the player's last seen position
         if(aiLerp.destination != targetOne.position && aiLerp.destination != targetTwo.position)
         {
-            SetGuardDestination(targetOne);
+            SetGuardDestination(mostRecentDestination);
         }
 
         if(aiLerp.destination == targetOne.position && aiLerp.reachedDestination)
         {
             SetGuardDestination(targetTwo);
+            mostRecentDestination = targetTwo;
         }
         else if(aiLerp.reachedDestination)
         {
             SetGuardDestination(targetOne);
+            mostRecentDestination = targetOne;
         }
         anim.SetBool("isAngry", false);
         isAngry = false;
