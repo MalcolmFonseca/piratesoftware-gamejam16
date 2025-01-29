@@ -26,6 +26,7 @@ public class FlightNPC : MonoBehaviour
     {
         path.maxSpeed = maxMoveSpeed;
         path.destination = targets[0].position;
+
         //Animation
         if (path.velocity.magnitude > 0) {
             animator.SetBool("Moving", true);
