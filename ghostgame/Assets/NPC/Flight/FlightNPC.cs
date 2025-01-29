@@ -10,20 +10,29 @@ public class FlightNPC : MonoBehaviour
 
     //Pathfinding
     private AIPath path;
-    private float moveSpeed = 2;
-    public Transform target;
+    private float maxMoveSpeed = 2;
+    private float currentSpeed;
+    public Transform[] targets;
+    public float[] timings;
 
     private void Start()
     {
         animator = GetComponent<Animator>();
         rigidbody2d = GetComponent<Rigidbody2D>();
-        path = GetComponent<AIPath>();  
+        path = GetComponent<AIPath>();
     }
 
     private void Update()
     {
-        path.maxSpeed = moveSpeed;
-        path.destination = target.position;
+        path.maxSpeed = maxMoveSpeed;
+        path.destination = targets[0].position;
+        //Animation
+        if (path.velocity.magnitude > 0) {
+            animator.SetBool("Moving", true);
+        } else
+        {
+            animator.SetBool("Moving", false);
+        }
     }
     
     private void FixedUpdate()
