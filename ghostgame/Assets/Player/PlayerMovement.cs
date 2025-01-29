@@ -6,12 +6,14 @@ using UnityEngineInternal;
 
 public class PlayerMovement : MonoBehaviour
 {
-    
+
     /*
      
         Collisions and ground collisions can't be merged with a composite collider, they need to be max 1 tile in size (tables need to have 4 seperate colliders)
      
      */
+
+    int health;
 
     // Interact Event parameter set by trigger
     GameObject interactableObject;
@@ -57,6 +59,7 @@ public class PlayerMovement : MonoBehaviour
     // ----------------- Setup ------------------------------
     void Awake()
     {
+        health = 100;
         // Components and Movement
         anim = GetComponent<Animator>();
         inputControls = new InputSystem_Actions();
@@ -73,6 +76,12 @@ public class PlayerMovement : MonoBehaviour
         canMove = true;
     }
 
+    private void Start()
+    {
+        // Take Damage Event
+        GameEvents.instance.onTakingDamage += TakeDamage;
+    }
+
     private void OnEnable()
     {
         // Movement
@@ -86,6 +95,7 @@ public class PlayerMovement : MonoBehaviour
         invisibility = inputControls.Player.Ability;
         invisibility.Enable();
         invisibility.performed += Ability;
+
     }
 
     private void OnDisable()
@@ -100,8 +110,16 @@ public class PlayerMovement : MonoBehaviour
         moveAction.Disable();
     }
 
+    private void OnDestroy()
+    {
+        // Take Damage Event
+        GameEvents.instance.onTakingDamage -= TakeDamage;
+    }
+
     void Update()
     {
+        //Debug.Log("Update: " + health);
+
         if (canMove)
         {
             // Movement
@@ -137,6 +155,15 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
+    private void TakeDamage()
+    {
+        health -= 10;
+        Debug.Log(health);
+
+        // if health <= 0
+            // anim.SetTrigger("Death");
+
+    }
 
 
     // ----------------------- Interact Event 'E' ------------------------

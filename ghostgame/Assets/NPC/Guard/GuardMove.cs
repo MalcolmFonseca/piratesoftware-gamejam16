@@ -4,8 +4,10 @@ using System;
 using Pathfinding;
 using UnityEngine.InputSystem.Processors;
 
-public class MovePositionAStarPathfinding : MonoBehaviour
+public class GuardMove : MonoBehaviour
 {
+    public Vector2 velocity;
+
     private AILerp aiLerp;
     [SerializeField]
     Transform targetOne;
@@ -53,6 +55,8 @@ public class MovePositionAStarPathfinding : MonoBehaviour
                 break;
         }
 
+        velocity = aiLerp.velocity;
+
         anim.SetFloat("speed", aiLerp.velocity.magnitude);
         if (aiLerp.velocity.x < 0f)
         {
@@ -61,6 +65,9 @@ public class MovePositionAStarPathfinding : MonoBehaviour
         {
             spriteRenderer.flipX = true;
         }
+
+        
+
     }
 
     void Patrol()
