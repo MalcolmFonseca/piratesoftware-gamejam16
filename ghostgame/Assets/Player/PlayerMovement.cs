@@ -46,8 +46,8 @@ public class PlayerMovement : MonoBehaviour
     // Invisibility
     [SerializeField]
     BoxCollider2D boxCollider2d;
-    //[SerializeField]
-    //BoxCollider2D triggerCollider;
+    [SerializeField]
+    BoxCollider2D triggerCollider;
     SpriteRenderer spriteRenderer;
     bool isInvisible;
     LayerMask wallLayer;
@@ -80,6 +80,7 @@ public class PlayerMovement : MonoBehaviour
     {
         // Take Damage Event
         GameEvents.instance.onTakingDamage += TakeDamage;
+        boxCollider2d.enabled = true;
     }
 
     private void OnEnable()
@@ -158,10 +159,12 @@ public class PlayerMovement : MonoBehaviour
     private void TakeDamage()
     {
         health -= 10;
-        Debug.Log(health);
-
+   
         // if health <= 0
             // anim.SetTrigger("Death");
+            // call death event trigger
+        //else
+            // change ghost colour to red for 0.25 seconds?
 
     }
 
@@ -169,7 +172,7 @@ public class PlayerMovement : MonoBehaviour
     // ----------------------- Interact Event 'E' ------------------------
     private void Interact(InputAction.CallbackContext context)
     {
-        if (!isInvisible && interactableObject != null && !onCooldown)
+        if (interactableObject != null && !onCooldown)
         {
             GameEvents.instance.Interact(interactableObject);
             anim.SetTrigger("interact");

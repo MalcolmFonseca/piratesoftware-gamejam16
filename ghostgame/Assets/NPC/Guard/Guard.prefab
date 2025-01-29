@@ -350,6 +350,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parent: {fileID: 7752840585741942177}
+  ghost: {fileID: 0}
 --- !u!1 &5973694032247400553
 GameObject:
   m_ObjectHideFlags: 0
@@ -542,7 +543,6 @@ GameObject:
   - component: {fileID: 36887999685379740}
   - component: {fileID: 848624368243380674}
   - component: {fileID: 8652373810989555099}
-  - component: {fileID: 4020680620552829314}
   - component: {fileID: 8284631114213191831}
   - component: {fileID: 5456785129610295707}
   - component: {fileID: 4009221800787313751}
@@ -720,18 +720,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.6816187, y: 0.061509013}
   m_EdgeRadius: 0
---- !u!114 &4020680620552829314
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7752840585741942177}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3b72452f5f59f324fa0fbe0d187fce29, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &8284631114213191831
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -776,6 +764,7 @@ MonoBehaviour:
   targetOne: {fileID: 0}
   targetTwo: {fileID: 0}
   ghost: {fileID: 0}
+  isAngry: 0
   currentState: 0
 --- !u!114 &4009221800787313751
 MonoBehaviour:

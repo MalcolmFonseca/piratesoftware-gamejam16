@@ -3,11 +3,11 @@ using Pathfinding;
 using System;
 using Pathfinding;
 using UnityEngine.InputSystem.Processors;
+using System.Collections;
 
 public class GuardMove : MonoBehaviour
 {
     public Vector2 velocity;
-
     private AILerp aiLerp;
     [SerializeField]
     Transform targetOne;
@@ -17,6 +17,8 @@ public class GuardMove : MonoBehaviour
     Transform ghost;
     Animator anim;
     SpriteRenderer spriteRenderer;
+    public bool isAngry;
+    LayerMask wallLayer;
 
     public enum StateMachine
     {
@@ -33,6 +35,7 @@ public class GuardMove : MonoBehaviour
         aiLerp = GetComponent<AILerp>();
         anim = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        wallLayer = LayerMask.GetMask("Obstacle");
     }
 
     private void Start()
@@ -40,8 +43,23 @@ public class GuardMove : MonoBehaviour
         currentState = StateMachine.Patrol;
     }
 
+
     private void Update()
     {
+
+        Vector2 direction = ghost.transform.position - transform.position;
+
+        // Call player damage event on raycast hit
+        RaycastHit2D playerHit = Physics2D.Raycast(transform.position, direction, 5f, wallLayer);
+        if (playerHit && playerHit.collider.tag == "Player")
+        {
+            currentState = StateMachine.Chase;
+        } else
+        {
+            currentState = StateMachine.Patrol;
+        }
+
+
         switch (currentState)
         {
             case StateMachine.Patrol:
@@ -65,9 +83,6 @@ public class GuardMove : MonoBehaviour
         {
             spriteRenderer.flipX = true;
         }
-
-        
-
     }
 
     void Patrol()
@@ -88,16 +103,19 @@ public class GuardMove : MonoBehaviour
             SetGuardDestination(targetOne);
         }
         anim.SetBool("isAngry", false);
+        isAngry = false;
     }
 
     void Chase()
     {
+        isAngry = true;
         SetGuardDestination(ghost);
         anim.SetBool("isAngry", true);
     }
 
     void Scared()
     {
+        isAngry = false;
         aiLerp.canMove = false;
         anim.SetBool("IsAngry", false);
         anim.SetBool("isScared", true);
