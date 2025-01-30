@@ -26,6 +26,8 @@ public class FlightNPC : MonoBehaviour
     private GameObject closestNPC = null;
     private GameObject playerObject;
 
+    Coroutine runningCoroutine;
+
     private void Start()
     {
         animator = GetComponent<Animator>();
@@ -52,7 +54,7 @@ public class FlightNPC : MonoBehaviour
         //increase sanity if near friends
         if (calcDistance(closestNPC.transform.position)<5)
         {
-            changeSanity(.01f * Time.deltaTime);
+            ChangeSanity(.01f * Time.deltaTime);
         }
 
         //--------------------------AI Movement----------------------------
@@ -199,7 +201,7 @@ public class FlightNPC : MonoBehaviour
         return closestGuard;
     }
 
-    private void changeSanity(float change)
+    private void ChangeSanity(float change)
     {
         if (sanity + change < 0 || sanity + change > 1)
         {
@@ -207,6 +209,46 @@ public class FlightNPC : MonoBehaviour
         } else
         {
             sanity += change;
+        }
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        // Interact object thrown
+        if (collision.gameObject.tag == "SanityHit")
+        {
+            ChangeSanity(-.1f);
+        }
+        else if (collision.gameObject.tag == "Light")     // Entering lighting
+        {
+            Debug.Log("enter ligth");
+            if (runningCoroutine != null)
+            {
+                StopCoroutine(runningCoroutine);
+            }
+            runningCoroutine = StartCoroutine(LightingSanityChange(.05f));
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        // On leaving the light, start ticking sanity down
+        if (collision.gameObject.tag == "Light")
+        {
+            Debug.Log("leave ligth");
+            if (runningCoroutine != null)
+            {
+                StopCoroutine(runningCoroutine);
+            }
+            StartCoroutine(LightingSanityChange(-.05f));
+        }
+    }
+
+    IEnumerator LightingSanityChange(float change)
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(1f);
+            ChangeSanity(change);
         }
     }
 }

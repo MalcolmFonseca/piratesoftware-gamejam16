@@ -190,7 +190,6 @@ public class GuardMove : MonoBehaviour
             ChangeSanity(-10);
         } else if (collision.gameObject.tag == "Light")     // Entering lighting
         {
-            Debug.Log("Entered Lighting");
             if(runningCoroutine != null)
             {
                 StopCoroutine(runningCoroutine);
@@ -204,7 +203,6 @@ public class GuardMove : MonoBehaviour
         // On leaving the light, start ticking sanity down
         if(collision.gameObject.tag == "Light")
         {
-            Debug.Log("Leaving Lighting");
             if(runningCoroutine != null)
             {
                 StopCoroutine(runningCoroutine);
@@ -230,7 +228,6 @@ public class GuardMove : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(1f);
-            Debug.Log("Sanity Change: " + sanity);
             ChangeSanity(change);
         }
     }
