@@ -234,9 +234,7 @@ public class GuardMove : MonoBehaviour
         {
             sanity = maxSanity;
         }
-        slider.value = sanity;
-        Debug.Log("Sanity: " + sanity);
-        
+        slider.value = sanity;        
     }
 
     IEnumerator LightingSanityChange(float change)
