@@ -22,11 +22,15 @@ public class GuardMove : MonoBehaviour
     SpriteRenderer spriteRenderer;
     public bool isAngry;
     LayerMask wallLayer;
+    BoxCollider2D collider;
 
     float sanity;
+    float maxSanity;
     Slider slider;
     Light2D light;
     FlashLight flashLightDamage;
+
+    Coroutine runningCoroutine;
 
     public enum StateMachine
     {
@@ -48,19 +52,32 @@ public class GuardMove : MonoBehaviour
 
     private void Start()
     {
+        // State and destination
         currentState = StateMachine.Patrol;
         SetGuardDestination(targetOne);
         mostRecentDestination = targetOne;
+        
+        // Sanity/flashlight
         sanity = 100;
+        maxSanity = 100;
         slider = gameObject.GetComponentInChildren<Slider>();
         light = gameObject.GetComponentInChildren<Light2D>();
         flashLightDamage = gameObject.GetComponentInChildren<FlashLight>();
+        collider = GetComponent<BoxCollider2D>();
     }
 
 
     private void Update()
     {
+        if(0 < sanity && sanity <= 25)
+        {
+            currentState = StateMachine.Scared;
+        } else if(sanity <= 0)
+        {
+            currentState = StateMachine.Dead;
+        }
 
+        // Checking if in patrol/angry state, if can see ghost, then chase
         if (currentState != StateMachine.Scared && currentState != StateMachine.Dead)
         {
             Vector2 direction = ghost.transform.position - transform.position;
@@ -94,8 +111,11 @@ public class GuardMove : MonoBehaviour
                 break;
         }
 
+        // Used for flashligh direction
         velocity = aiLerp.velocity;
 
+
+        // Animation/sprite changing
         anim.SetFloat("speed", aiLerp.velocity.magnitude);
         if (aiLerp.velocity.x < 0f)
         {
@@ -122,13 +142,20 @@ public class GuardMove : MonoBehaviour
 
     void Scared()
     {
-        isAngry = false;
         Patrolling();
+        isAngry = false;
+        anim.SetBool("isAngry", false);
+        anim.SetBool("isScared", true);
+        light.enabled = false;
+        flashLightDamage.enabled = false;
     }
 
     void Dead()
     {
+        anim.SetBool("isScared", false);
+        anim.SetBool("isDead", true);
         aiLerp.canMove = false;
+        collider.enabled = false;
     }
 
     void Patrolling()
@@ -157,32 +184,55 @@ public class GuardMove : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        // Interact object thrown
         if (collision.gameObject.tag == "SanityHit")
         {
-            // adjust sanity
-            sanity -= 25;
-            slider.value = sanity;
-
-            // Check if there needs to be a state change
-            if (sanity <= 0)
+            ChangeSanity(-10);
+        } else if (collision.gameObject.tag == "Light")     // Entering lighting
+        {
+            Debug.Log("Entered Lighting");
+            if(runningCoroutine != null)
             {
-                anim.SetBool("isScared", false);
-                anim.SetBool("isDead", true);
-                currentState = StateMachine.Dead;
+                StopCoroutine(runningCoroutine);
             }
-            else if (sanity < 26)
-            {
-                anim.SetBool("IsAngry", false);
-                anim.SetBool("isScared", true);
-                currentState = StateMachine.Scared;
-                light.enabled = false;
-                flashLightDamage.enabled = false;
-            }
-
-            // Test hit
-            Debug.Log("Hit");
+            runningCoroutine = StartCoroutine(LightingSanityChange(1f));
         }
+    }
 
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        // On leaving the light, start ticking sanity down
+        if(collision.gameObject.tag == "Light")
+        {
+            Debug.Log("Leaving Lighting");
+            if(runningCoroutine != null)
+            {
+                StopCoroutine(runningCoroutine);
+            }
+            StartCoroutine(LightingSanityChange(-1f));
+        }
+    }
+
+    void ChangeSanity(float change)
+    {
+
+        sanity += change;
+        if (sanity > maxSanity)
+        {
+            sanity = maxSanity;
+        }
+        slider.value = sanity;
+        
+    }
+
+    IEnumerator LightingSanityChange(float change)
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(1f);
+            Debug.Log("Sanity Change: " + sanity);
+            ChangeSanity(change);
+        }
     }
 
 }

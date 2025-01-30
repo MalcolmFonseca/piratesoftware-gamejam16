@@ -8,6 +8,8 @@ TagManager:
   - Candle
   - NPC
   - SanityHit
+  - SanityBoo
+  - Light
   layers:
   - Default
   - TransparentFX
