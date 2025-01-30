@@ -14,6 +14,7 @@ public class PlayerMovement : MonoBehaviour
      */
 
     int health;
+    bool canTakeDmg;
 
     // Interact Event parameter set by trigger
     GameObject interactableObject;
@@ -46,8 +47,6 @@ public class PlayerMovement : MonoBehaviour
     // Invisibility
     [SerializeField]
     BoxCollider2D boxCollider2d;
-    [SerializeField]
-    BoxCollider2D triggerCollider;
     SpriteRenderer spriteRenderer;
     bool isInvisible;
     LayerMask wallLayer;
@@ -77,6 +76,7 @@ public class PlayerMovement : MonoBehaviour
         isInvisible = false;
         wallLayer = LayerMask.GetMask("Obstacle");
         canMove = true;
+        canTakeDmg = true;
     }
 
     private void Start()
@@ -122,7 +122,6 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        //Debug.Log("Update: " + health);
 
         if (canMove)
         {
@@ -161,14 +160,18 @@ public class PlayerMovement : MonoBehaviour
 
     private void TakeDamage()
     {
-        health -= 10;
-   
-        // if health <= 0
-            // anim.SetTrigger("Death");
-            // call death event trigger
-        //else
-            // change ghost colour to red for 0.25 seconds?
+        if (canTakeDmg) { 
+            health -= 10;
 
+            if (health <= 0)
+            {
+                anim.SetTrigger("death");
+                canMove = false;
+                canTakeDmg = false;
+                rigidBody2d.constraints = RigidbodyConstraints2D.FreezePosition;
+                GameEvents.instance.LoseGame(); // call game over event
+            }
+        }
     }
 
 
@@ -239,6 +242,7 @@ public class PlayerMovement : MonoBehaviour
         if (inWall())
         {
             canMove = false;
+            boxCollider2d.enabled = false;
             FindPosition();
         }
         yield return new WaitUntil(() => canMove);
@@ -320,11 +324,12 @@ public class PlayerMovement : MonoBehaviour
 
         transform.position = inMapPosition;
         canMove = true;
+        boxCollider2d.enabled = true;
     }
 
     private void TransparencyChange(float transparency)
     {
-        Color color = spriteRenderer.color;
+        Color color = Color.white;
         color.a = transparency;
         spriteRenderer.color = color;
     }
@@ -332,7 +337,7 @@ public class PlayerMovement : MonoBehaviour
     private void ManageColliders(bool isInvisible)
     {
         //triggerCollider.enabled = isInvisible;
-        boxCollider2d.enabled = !isInvisible;
+        boxCollider2d.isTrigger = isInvisible;
     }
 
     IEnumerator InvisibilityCD()
@@ -341,10 +346,14 @@ public class PlayerMovement : MonoBehaviour
         GameEvents.instance.StartInvisibility(2f);
         yield return new WaitForSeconds(2f); // invisibility duration
         StartCoroutine(RevokeInvisibility());
+        Debug.Log("Here one");
         yield return new WaitUntil(() => !inWall());
+        Debug.Log("here 2");
         // call cooldown event
         GameEvents.instance.StartCooldown(2f);
+        Debug.Log("here 3");
         yield return new WaitForSeconds(2f);
+        Debug.Log("Here 4");
         invisCooldown = false;
     }
 

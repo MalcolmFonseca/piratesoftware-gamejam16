@@ -92,8 +92,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 80
-  m_fontSizeBase: 80
+  m_fontSize: 40
+  m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 0
@@ -173,8 +173,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 246, y: 69}
-  m_SizeDelta: {x: 315.4091, y: 27.670898}
+  m_AnchoredPosition: {x: 185.5, y: 40.5}
+  m_SizeDelta: {x: 263.6125, y: 16.9252}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &8594927181727376544
 MonoBehaviour:
@@ -274,8 +274,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: -75.5}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0.0000076294, y: -36}
+  m_SizeDelta: {x: -0.0000076294, y: -0.479}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3853081127684438384
 CanvasRenderer:
@@ -349,8 +349,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: -10.56073, y: 0.5128174}
-  m_SizeDelta: {x: 48.0754, y: 48.0754}
+  m_AnchoredPosition: {x: -10.8, y: 0.51282}
+  m_SizeDelta: {x: 33.5016, y: 33.5016}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3568451124822751017
 CanvasRenderer:
@@ -466,7 +466,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
@@ -532,8 +532,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 107, y: 202}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: 50.918274, y: 110.26657}
+  m_SizeDelta: {x: 52.1611, y: 52.161}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2880584684863890868
 MonoBehaviour:
@@ -635,7 +635,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.5653076, y: 0.5128174}
+  m_AnchoredPosition: {x: -0.56529236, y: 0.5128174}
   m_SizeDelta: {x: 33.48706, y: 88.62781}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1740412591356910442
@@ -709,10 +709,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 2936073949991648663}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6135796289166149812
 CanvasRenderer:
@@ -907,8 +907,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 234, y: 202}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: 126.2, y: 110.4}
+  m_SizeDelta: {x: 52.4146, y: 52.4146}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &588453656015949651
 MonoBehaviour:
@@ -924,6 +924,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   imageCD: {fileID: 5678249700052274642}
   textCD: {fileID: 540317039286401686}
+  interactIcon: {fileID: 7415830641308187449}
 --- !u!1 &7415830641308187449
 GameObject:
   m_ObjectHideFlags: 0
@@ -957,10 +958,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1770037464633125216}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &449903433386457924
 CanvasRenderer:
@@ -1211,8 +1212,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 80
-  m_fontSizeBase: 80
+  m_fontSize: 40
+  m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 0

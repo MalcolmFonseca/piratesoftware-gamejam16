@@ -26,6 +26,7 @@ public class GuardMove : MonoBehaviour
     public bool isAngry;
     LayerMask wallLayer;
     BoxCollider2D collider;
+    Rigidbody2D rigidBody2d;
 
     float sanity;
     float maxSanity;
@@ -50,6 +51,7 @@ public class GuardMove : MonoBehaviour
         aiLerp = GetComponent<AILerp>();
         anim = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        rigidBody2d = GetComponent<Rigidbody2D>();
         wallLayer = LayerMask.GetMask("Obstacle");
         timePassed = 0;
         inDarkness = true;
@@ -101,7 +103,7 @@ public class GuardMove : MonoBehaviour
 
                 // Call player damage event on raycast hit
                 RaycastHit2D playerHit = Physics2D.Raycast(transform.position, direction, 5f, wallLayer);
-                if (playerHit && playerHit.collider.tag == "Player")
+                if (playerHit && playerHit.collider.tag == "Player" && !playerHit.collider.isTrigger)
                 {
                     currentState = StateMachine.Chase;
                 }
@@ -174,6 +176,17 @@ public class GuardMove : MonoBehaviour
         anim.SetBool("isDead", true);
         aiLerp.canMove = false;
         collider.enabled = false;
+        rigidBody2d.constraints = RigidbodyConstraints2D.FreezePosition;
+        if(runningCoroutine == null)
+        {
+            runningCoroutine = StartCoroutine(DestroyDead());
+        }
+    }
+
+    IEnumerator DestroyDead()
+    {
+        yield return new WaitForSeconds(1f);
+        Destroy(gameObject);
     }
 
     void Patrolling()

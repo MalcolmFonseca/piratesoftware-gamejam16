@@ -21,15 +21,15 @@ public class InvisibilityCD : MonoBehaviour
     {
         textCD.gameObject.SetActive(false);
         imageCD.fillAmount = 0;
-        GameEvents.instance.onInvisibilityCooldown += StartCooldown;
-        GameEvents.instance.onInvisibility += StartDuration;
+        GameEvents.instance.OnInvisibilityCooldown += StartCooldown;
+        GameEvents.instance.OnInvisibility += StartDuration;
         slider.value = 0;
     }
 
     private void OnDestroy()
     {
-        GameEvents.instance.onInvisibilityCooldown -= StartCooldown;
-        GameEvents.instance.onInvisibility -= StartDuration;
+        GameEvents.instance.OnInvisibilityCooldown -= StartCooldown;
+        GameEvents.instance.OnInvisibility -= StartDuration;
     }
 
     void StartCooldown(float cooldown)
@@ -44,11 +44,12 @@ public class InvisibilityCD : MonoBehaviour
 
     IEnumerator Cooldown(float cooldown)
     {
+        Debug.Log("here 10");
         textCD.gameObject.SetActive(true);
         imageCD.fillAmount = 1;
 
         float timePassed = 0;
-
+        Debug.Log("here11");
         while (timePassed < cooldown)
         {
             textCD.text = Mathf.RoundToInt(cooldown - timePassed).ToString();
@@ -57,6 +58,7 @@ public class InvisibilityCD : MonoBehaviour
             yield return null;
         }
 
+        Debug.Log("here 12");
         imageCD.fillAmount = 0;
         textCD.gameObject.SetActive(false);
 

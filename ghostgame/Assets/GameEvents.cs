@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameEvents : MonoBehaviour
@@ -9,7 +10,6 @@ public class GameEvents : MonoBehaviour
     {
         instance = this;
     }
-
 
     //----------------------------------------------------------------------------------------------------------------------------------
     // Controls interact cooldown and tells what is being interacted with (called within player)
@@ -34,17 +34,17 @@ public class GameEvents : MonoBehaviour
 
     //----------------------------------------------------------------------------------------------------------------------------------
     // Controls invisibility duration (called within player)
-    public event Action<float> onInvisibility;
+    public event Action<float> OnInvisibility;
     public void StartInvisibility(float duration) 
     {
-        onInvisibility?.Invoke(duration);
+        OnInvisibility?.Invoke(duration);
     }
 
     // Controls invisibility cooldown (called within player)
-    public event Action<float> onInvisibilityCooldown;
+    public event Action<float> OnInvisibilityCooldown;
     public void StartCooldown(float cooldown)
     {
-        onInvisibilityCooldown?.Invoke(cooldown);
+        OnInvisibilityCooldown?.Invoke(cooldown);
     }
 
 
@@ -54,5 +54,21 @@ public class GameEvents : MonoBehaviour
     public void TakeDamage()
     {
         onTakingDamage?.Invoke();
+    }
+
+    //----------------------------------------------------------------------------------------------------------------------------------
+    // Player dies
+    public event Action onLoseGame;
+    public void LoseGame()
+    {
+        Debug.Log("Game Over");
+        onLoseGame?.Invoke();
+    }
+
+    // Player Wins
+    public event Action onWinGame;
+    public void Winner()
+    {
+
     }
 }
