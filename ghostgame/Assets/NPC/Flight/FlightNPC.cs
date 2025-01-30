@@ -5,7 +5,7 @@ using System.IO;
 
 public class FlightNPC : MonoBehaviour
 {
-    private float sanity = 1;
+    private float sanity = 1f;
 
     Animator animator;
     SpriteRenderer spriteRenderer;
@@ -15,12 +15,14 @@ public class FlightNPC : MonoBehaviour
     private bool inChase = false;
     private bool pathFinished = false;
     private bool idle = true;
-    private Vector3 randomPoint;
+    private Vector3 wanderTarget;
     private bool onPath = false;
     private AIPath path;
     private float maxMoveSpeed = 2;
     [SerializeField] private Transform[] targets;
     private int targetIndex = 0;
+
+    private GameObject[] npcObjects;
 
     private void Start()
     {
@@ -28,6 +30,7 @@ public class FlightNPC : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         rigidbody2d = GetComponent<Rigidbody2D>();
         path = GetComponent<AIPath>();
+        npcObjects = GameObject.FindGameObjectsWithTag("NPC");
     }
 
     private void Update()
@@ -54,16 +57,34 @@ public class FlightNPC : MonoBehaviour
             animator.SetBool("Running", false);
             if (idle)
             {
-                //pick random point to wander to
-                randomPoint = Random.insideUnitSphere * 6;
-                randomPoint.y = 0;
-                randomPoint += transform.position;
+                if (sanity >= .5)
+                {
+                    //pick random point to wander to
+                    wanderTarget = Random.insideUnitSphere * 6;
+                    wanderTarget.y = 0;
+                    wanderTarget += transform.position;
+                }
+                else //if low on sanity seek closest friend
+                {
+                    float distance = 100000;
+                    foreach (GameObject npc in npcObjects)
+                    {
+                        float tempDistance = calcDistance(npc.transform.position);
+                        if (tempDistance<distance && tempDistance != 0) 
+                        {
+                            distance = tempDistance;
+                            wanderTarget = npc.transform.position;
+                            wanderTarget.x += (Random.Range(0, 2) * 2 - 1) * 3;
+                            wanderTarget.y += (Random.Range(0, 2) * 2 - 1) * 3;
+                        }
+                    }
+                }
 
                 idle = false;
             } else
             {
                 //roam to random point
-                path.destination = randomPoint;
+                path.destination = wanderTarget;
                 if (path.velocity.magnitude  == 0 && !pathFinished)
                 {
                     pathFinished = true;
@@ -110,5 +131,11 @@ public class FlightNPC : MonoBehaviour
         targetIndex += 1;
         if (targetIndex >= targets.Length) { targetIndex = 0; }
         onPath = true;
+    }
+
+    private float calcDistance(Vector3 point)
+    {
+        Vector3 distanceVector = point - transform.position;
+        return distanceVector.magnitude;
     }
 }
