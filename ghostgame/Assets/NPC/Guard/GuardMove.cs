@@ -4,6 +4,8 @@ using System;
 using Pathfinding;
 using UnityEngine.InputSystem.Processors;
 using System.Collections;
+using UnityEngine.UI;
+using UnityEngine.Rendering.Universal;
 
 public class GuardMove : MonoBehaviour
 {
@@ -20,6 +22,11 @@ public class GuardMove : MonoBehaviour
     SpriteRenderer spriteRenderer;
     public bool isAngry;
     LayerMask wallLayer;
+
+    float sanity;
+    Slider slider;
+    Light2D light;
+    FlashLight flashLightDamage;
 
     public enum StateMachine
     {
@@ -44,22 +51,30 @@ public class GuardMove : MonoBehaviour
         currentState = StateMachine.Patrol;
         SetGuardDestination(targetOne);
         mostRecentDestination = targetOne;
+        sanity = 100;
+        slider = gameObject.GetComponentInChildren<Slider>();
+        light = gameObject.GetComponentInChildren<Light2D>();
+        flashLightDamage = gameObject.GetComponentInChildren<FlashLight>();
     }
 
 
     private void Update()
     {
 
-        Vector2 direction = ghost.transform.position - transform.position;
+        if (currentState != StateMachine.Scared && currentState != StateMachine.Dead)
+        {
+            Vector2 direction = ghost.transform.position - transform.position;
 
-        // Call player damage event on raycast hit
-        RaycastHit2D playerHit = Physics2D.Raycast(transform.position, direction, 5f, wallLayer);
-        if (playerHit && playerHit.collider.tag == "Player")
-        {
-            currentState = StateMachine.Chase;
-        } else
-        {
-            currentState = StateMachine.Patrol;
+            // Call player damage event on raycast hit
+            RaycastHit2D playerHit = Physics2D.Raycast(transform.position, direction, 5f, wallLayer);
+            if (playerHit && playerHit.collider.tag == "Player")
+            {
+                currentState = StateMachine.Chase;
+            }
+            else
+            {
+                currentState = StateMachine.Patrol;
+            }
         }
 
 
@@ -73,6 +88,9 @@ public class GuardMove : MonoBehaviour
                 break;
             case StateMachine.Scared:
                 Scared();
+                break;
+            case StateMachine.Dead:
+                Dead();
                 break;
         }
 
@@ -90,23 +108,7 @@ public class GuardMove : MonoBehaviour
 
     void Patrol()
     {
-        // Included for initial start, and to ensure once no longer chasing the ghost and comes back to patrol
-        // the destination resets off of the player's last seen position
-        if(aiLerp.destination != targetOne.position && aiLerp.destination != targetTwo.position)
-        {
-            SetGuardDestination(mostRecentDestination);
-        }
-
-        if(aiLerp.destination == targetOne.position && aiLerp.reachedDestination)
-        {
-            SetGuardDestination(targetTwo);
-            mostRecentDestination = targetTwo;
-        }
-        else if(aiLerp.reachedDestination)
-        {
-            SetGuardDestination(targetOne);
-            mostRecentDestination = targetOne;
-        }
+        Patrolling();
         anim.SetBool("isAngry", false);
         isAngry = false;
     }
@@ -121,14 +123,66 @@ public class GuardMove : MonoBehaviour
     void Scared()
     {
         isAngry = false;
+        Patrolling();
+    }
+
+    void Dead()
+    {
         aiLerp.canMove = false;
-        anim.SetBool("IsAngry", false);
-        anim.SetBool("isScared", true);
+    }
+
+    void Patrolling()
+    {
+        if (aiLerp.destination != targetOne.position && aiLerp.destination != targetTwo.position)
+        {
+            SetGuardDestination(mostRecentDestination);
+        }
+
+        if (aiLerp.destination == targetOne.position && aiLerp.reachedDestination)
+        {
+            SetGuardDestination(targetTwo);
+            mostRecentDestination = targetTwo;
+        }
+        else if (aiLerp.reachedDestination)
+        {
+            SetGuardDestination(targetOne);
+            mostRecentDestination = targetOne;
+        }
     }
 
     private void SetGuardDestination(Transform target)
     {
         aiLerp.destination = target.position;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "SanityHit")
+        {
+            // adjust sanity
+            sanity -= 25;
+            slider.value = sanity;
+
+            // Check if there needs to be a state change
+            if (sanity <= 0)
+            {
+                anim.SetBool("isScared", false);
+                anim.SetBool("isDead", true);
+                currentState = StateMachine.Dead;
+            }
+            else if (sanity < 26)
+            {
+                anim.SetBool("IsAngry", false);
+                anim.SetBool("isScared", true);
+                currentState = StateMachine.Scared;
+                light.enabled = false;
+                flashLightDamage.enabled = false;
+            }
+
+            // Test hit
+            Debug.Log("Hit");
+        }
+
     }
 
 }

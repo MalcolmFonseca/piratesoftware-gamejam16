@@ -54,6 +54,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     float checkRadius;
 
+    // Sanity Hit for reveal after invis
+    [SerializeField]
+    GameObject hitBox;
 
 
     // ----------------- Setup ------------------------------
@@ -243,6 +246,8 @@ public class PlayerMovement : MonoBehaviour
         TransparencyChange(1f);
         ManageColliders(isInvisible);
         spriteRenderer.sortingLayerName = "Collisions";
+        Instantiate(hitBox, gameObject.transform);
+        anim.SetTrigger("boo");
     }
 
     private void FindPosition()

@@ -6,6 +6,8 @@ public class Bookshelf : MonoBehaviour
     Rigidbody2D book;
     [SerializeField]
     Vector2 throwDirection;
+    [SerializeField]
+    GameObject hitTrigger;
 
 
     private void Start()
@@ -25,11 +27,13 @@ public class Bookshelf : MonoBehaviour
 
         if(gameObject == this.gameObject)
         {
-            //logic
-            //instantiate with velocity
+            // Instantiate Book
             Rigidbody2D bookInstance;
             bookInstance = Instantiate(book, this.gameObject.transform) as Rigidbody2D;
             bookInstance.AddForce(throwDirection * 350f);
+
+            // Instantiate Hitbox
+            Instantiate(hitTrigger);
         }
 
     }
