@@ -43,6 +43,11 @@ public class FlightNPC : MonoBehaviour
             animator.SetBool("Running", false);
             //go to desired target
             path.destination = targets[targetIndex].position;
+            //go back to roaming after reaching room
+            if (path.velocity.magnitude == 0)
+            {
+                onPath = false;
+            }
         }
         else//---------------Wandering in room------------------
         {

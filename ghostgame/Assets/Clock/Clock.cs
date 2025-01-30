@@ -12,7 +12,6 @@ public class Clock : MonoBehaviour
     void Start()
     {
         clockText = GetComponent<TMP_Text>();
-        npcObjects = GameObject.FindGameObjectsWithTag("NPC");
         prevHour = Mathf.FloorToInt(elapsedTime / 3600f);
     }
 
@@ -42,6 +41,7 @@ public class Clock : MonoBehaviour
 
     private void AlertHourChange()
     {
+        npcObjects = GameObject.FindGameObjectsWithTag("NPC");
         //trigger each npc to seek next room
         foreach (GameObject npcObject in npcObjects) 
         {
