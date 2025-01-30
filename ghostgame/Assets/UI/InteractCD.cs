@@ -45,7 +45,7 @@ public class InteractCD : MonoBehaviour
         textCD.gameObject.SetActive(true);
         imageCD.fillAmount += 1;
 
-        float cooldownTime = 5f;
+        float cooldownTime = 1f;
         float timePassed = 0;
 
         while (timePassed < cooldownTime)

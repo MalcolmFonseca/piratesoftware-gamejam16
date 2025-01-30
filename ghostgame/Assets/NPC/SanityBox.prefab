@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 4243261532809063048}
   - component: {fileID: 9082361736960962696}
   - component: {fileID: 4563888957607436315}
-  - component: {fileID: -8908315345282714832}
   m_Layer: 0
   m_Name: SanityBox
   m_TagString: SanityHit
@@ -49,7 +48,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -107,15 +106,3 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &-8908315345282714832
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3789010670721480848}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 604b45ffa30e88c44a740879f591395e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

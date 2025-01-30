@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 72575210892675370}
   m_Layer: 0
   m_Name: PlayerScare
-  m_TagString: SanityBoo
+  m_TagString: SanityHit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

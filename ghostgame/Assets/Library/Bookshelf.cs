@@ -7,19 +7,38 @@ public class Bookshelf : MonoBehaviour
     [SerializeField]
     Vector2 throwDirection;
     [SerializeField]
-    GameObject hitTrigger;
+    GameObject childObject;
+    BoxCollider2D hitCollider;
+    float timePassed;
 
+    private void Awake()
+    {
+        hitCollider = childObject.GetComponent<BoxCollider2D>();
+    }
 
     private void Start()
     {
         // subscribe
         GameEvents.instance.onInteract += ThrowBook;
+
     }
 
     private void OnDestroy()
     {
         // unsubscribe
         GameEvents.instance.onInteract -= ThrowBook;
+    }
+
+    private void Update()
+    {
+        if (hitCollider.enabled)
+        {
+            timePassed += Time.deltaTime;
+            if (timePassed > 1f)
+            {
+                hitCollider.enabled = false;
+            }
+        }
     }
 
     private void ThrowBook(GameObject gameObject)
@@ -32,8 +51,9 @@ public class Bookshelf : MonoBehaviour
             bookInstance = Instantiate(book, this.gameObject.transform) as Rigidbody2D;
             bookInstance.AddForce(throwDirection * 350f);
 
-            // Instantiate Hitbox
-            Instantiate(hitTrigger);
+            // Enable hit trigger, disable it 1s later through update function
+            hitCollider.enabled = true;
+            timePassed = 0f;
         }
 
     }

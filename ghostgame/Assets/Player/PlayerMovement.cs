@@ -180,7 +180,7 @@ public class PlayerMovement : MonoBehaviour
             GameEvents.instance.Interact(interactableObject);
             anim.SetTrigger("interact");
             onCooldown = true;
-            StartCoroutine(InteractCooldown(5));
+            StartCoroutine(InteractCooldown(1));
         }
     }
     IEnumerator InteractCooldown(float timer)

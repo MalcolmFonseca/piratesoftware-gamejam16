@@ -6,20 +6,24 @@ public class CandleController : MonoBehaviour
 {
     Light2D light;
     Animator anim;
-    public int id;
+    [SerializeField]
+    GameObject lightBox;
+    CircleCollider2D lightCollider;
 
     private void Awake()
     {
         anim = GetComponent<Animator>();
         light = GetComponent<Light2D>();
+        lightCollider = lightBox.GetComponent<CircleCollider2D>();
+        lightCollider.radius = light.pointLightOuterRadius;
     }
 
-    private void OnEnable()
+    private void Start()
     {
         GameEvents.instance.onInteract += ToggleLight;
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
         GameEvents.instance.onInteract -= ToggleLight;
     }
@@ -30,6 +34,7 @@ public class CandleController : MonoBehaviour
         {
             light.enabled = !light.enabled;
             anim.SetBool("isFlame", light.enabled);
+            lightCollider.enabled = light.enabled;
         }
     }
 

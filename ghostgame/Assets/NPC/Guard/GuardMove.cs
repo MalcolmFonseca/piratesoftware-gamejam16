@@ -6,9 +6,12 @@ using UnityEngine.InputSystem.Processors;
 using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.Rendering.Universal;
+using Unity.VisualScripting;
 
 public class GuardMove : MonoBehaviour
 {
+    float timePassed;
+    bool inDarkness;
     public Vector2 velocity;
     private AILerp aiLerp;
     [SerializeField]
@@ -48,6 +51,8 @@ public class GuardMove : MonoBehaviour
         anim = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         wallLayer = LayerMask.GetMask("Obstacle");
+        timePassed = 0;
+        inDarkness = true;
     }
 
     private void Start()
@@ -77,20 +82,33 @@ public class GuardMove : MonoBehaviour
             currentState = StateMachine.Dead;
         }
 
-        // Checking if in patrol/angry state, if can see ghost, then chase
-        if (currentState != StateMachine.Scared && currentState != StateMachine.Dead)
-        {
-            Vector2 direction = ghost.transform.position - transform.position;
+        timePassed += Time.deltaTime;
 
-            // Call player damage event on raycast hit
-            RaycastHit2D playerHit = Physics2D.Raycast(transform.position, direction, 5f, wallLayer);
-            if (playerHit && playerHit.collider.tag == "Player")
+        if (timePassed > 0.5f)
+        {
+            timePassed = 0;
+            if (inDarkness) { 
+            
+                ChangeSanity(-1f);
+            } else
             {
-                currentState = StateMachine.Chase;
+                ChangeSanity(1f);
             }
-            else
+            // Checking if in patrol/angry state, if can see ghost, then chase
+            if (currentState != StateMachine.Scared && currentState != StateMachine.Dead)
             {
-                currentState = StateMachine.Patrol;
+                Vector2 direction = ghost.transform.position - transform.position;
+
+                // Call player damage event on raycast hit
+                RaycastHit2D playerHit = Physics2D.Raycast(transform.position, direction, 5f, wallLayer);
+                if (playerHit && playerHit.collider.tag == "Player")
+                {
+                    currentState = StateMachine.Chase;
+                }
+                else
+                {
+                    currentState = StateMachine.Patrol;
+                }
             }
         }
 
@@ -188,27 +206,24 @@ public class GuardMove : MonoBehaviour
         if (collision.gameObject.tag == "SanityHit")
         {
             ChangeSanity(-10);
-        } else if (collision.gameObject.tag == "Light")     // Entering lighting
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if(collision.gameObject.tag == "Light")
         {
-            if(runningCoroutine != null)
-            {
-                StopCoroutine(runningCoroutine);
-            }
-            runningCoroutine = StartCoroutine(LightingSanityChange(1f));
+            inDarkness = false;
         }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        // On leaving the light, start ticking sanity down
         if(collision.gameObject.tag == "Light")
         {
-            if(runningCoroutine != null)
-            {
-                StopCoroutine(runningCoroutine);
-            }
-            StartCoroutine(LightingSanityChange(-1f));
+            inDarkness = true;
         }
+        
     }
 
     void ChangeSanity(float change)
@@ -220,6 +235,7 @@ public class GuardMove : MonoBehaviour
             sanity = maxSanity;
         }
         slider.value = sanity;
+        Debug.Log("Sanity: " + sanity);
         
     }
 
