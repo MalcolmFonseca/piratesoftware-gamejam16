@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Interact
   - Candle
+  - NPC
   layers:
   - Default
   - TransparentFX

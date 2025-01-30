@@ -18,9 +18,8 @@ public class FlightNPC : MonoBehaviour
     private bool onPath = false;
     private AIPath path;
     private float maxMoveSpeed = 2;
-    private float currentSpeed;
     [SerializeField] private Transform[] targets;
-    [SerializeField] private float[] timings;
+    private int targetIndex = 0;
 
     private void Start()
     {
@@ -31,27 +30,28 @@ public class FlightNPC : MonoBehaviour
 
     private void Update()
     {
+        //--------------------------AI Movement----------------------------
         path.maxSpeed = maxMoveSpeed;
-        if (inChase)
+        if (inChase)//---------------Chased------------------
         {
             //try to find nearest person
             animator.SetBool("Running", true);
-        } else if (onPath)
+        } else if (onPath)//---------------Path to Room------------------
         {
             animator.SetBool("Running", false);
             //go to desired target
-            path.destination = targets[0].position;
-        } else
+            path.destination = targets[targetIndex].position;
+        }
+        else//---------------Wandering in room------------------
         {
-            //wander in room
             animator.SetBool("Running", false);
             if (idle)
             {
                 //pick random point to wander to
                 randomPoint = Random.insideUnitSphere * 6;
-
                 randomPoint.y = 0;
                 randomPoint += transform.position;
+
                 idle = false;
             } else
             {
@@ -66,7 +66,7 @@ public class FlightNPC : MonoBehaviour
  
         }
 
-        //Animation
+        //------------Animation-----------------
         if (path.velocity.magnitude > 0) {
             animator.SetBool("Moving", true);
         } else
@@ -76,16 +76,20 @@ public class FlightNPC : MonoBehaviour
 
         animator.SetFloat("Sanity", sanity);
     }
-    
-    private void FixedUpdate()
-    {
-        
-    }
 
     IEnumerator setIdle()
     {
         yield return new WaitForSeconds(5f);
         idle = true;
         pathFinished = false;
+    }
+
+    //to be called by clock after reaching next hour
+    public void changePath() 
+    {
+        //increment index but keep in bounds
+        targetIndex += 1;
+        if (targetIndex >= targets.Length) { targetIndex = 0; }
+        onPath = true;
     }
 }

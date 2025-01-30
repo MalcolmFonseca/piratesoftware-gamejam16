@@ -5,11 +5,15 @@ public class Clock : MonoBehaviour
 {
     private float elapsedTime = 72000f;
     private TMP_Text clockText;
-    private float timeScale = 20f;
+    private float timeScale = 100f;
+    private GameObject[] npcObjects;
+    private float prevHour;
 
     void Start()
     {
         clockText = GetComponent<TMP_Text>();
+        npcObjects = GameObject.FindGameObjectsWithTag("NPC");
+        prevHour = Mathf.FloorToInt(elapsedTime / 3600f);
     }
 
     void Update()
@@ -20,6 +24,12 @@ public class Clock : MonoBehaviour
         int hours = Mathf.FloorToInt(elapsedTime/3600f);
         int minutes = Mathf.FloorToInt((elapsedTime - hours*3600f)/60f);
 
+        if (hours != prevHour) 
+        {
+            prevHour = hours;
+            AlertHourChange();
+        }
+
         //enforce clock cycle
         if(elapsedTime >= 86400f)
         {
@@ -28,5 +38,18 @@ public class Clock : MonoBehaviour
 
         string clockString = string.Format("{0:00}:{1:00}", hours, minutes);
         clockText.text = clockString;
+    }
+
+    private void AlertHourChange()
+    {
+        //trigger each npc to seek next room
+        foreach (GameObject npcObject in npcObjects) 
+        {
+            FlightNPC npc = npcObject.GetComponent<FlightNPC>();
+            if (npc != null)
+            {
+                npc.changePath();
+            }
+        }
     }
 }
