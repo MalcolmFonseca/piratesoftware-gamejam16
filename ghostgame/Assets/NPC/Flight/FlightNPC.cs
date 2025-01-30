@@ -1,5 +1,7 @@
 using UnityEngine;
 using Pathfinding;
+using System.Collections;
+using System.IO;
 
 public class FlightNPC : MonoBehaviour
 {
@@ -9,11 +11,16 @@ public class FlightNPC : MonoBehaviour
     Rigidbody2D rigidbody2d;
 
     //Pathfinding
+    private bool inChase = false;
+    private bool pathFinished = false;
+    private bool idle = true;
+    private Vector3 randomPoint;
+    private bool onPath = false;
     private AIPath path;
     private float maxMoveSpeed = 2;
     private float currentSpeed;
-    public Transform[] targets;
-    public float[] timings;
+    [SerializeField] private Transform[] targets;
+    [SerializeField] private float[] timings;
 
     private void Start()
     {
@@ -25,7 +32,39 @@ public class FlightNPC : MonoBehaviour
     private void Update()
     {
         path.maxSpeed = maxMoveSpeed;
-        path.destination = targets[0].position;
+        if (inChase)
+        {
+            //try to find nearest person
+            animator.SetBool("Running", true);
+        } else if (onPath)
+        {
+            animator.SetBool("Running", false);
+            //go to desired target
+            path.destination = targets[0].position;
+        } else
+        {
+            //wander in room
+            animator.SetBool("Running", false);
+            if (idle)
+            {
+                //pick random point to wander to
+                randomPoint = Random.insideUnitSphere * 6;
+
+                randomPoint.y = 0;
+                randomPoint += transform.position;
+                idle = false;
+            } else
+            {
+                //roam to random point
+                path.destination = randomPoint;
+                if (path.velocity.magnitude  == 0 && !pathFinished)
+                {
+                    pathFinished = true;
+                    StartCoroutine(setIdle());
+                }
+            }
+ 
+        }
 
         //Animation
         if (path.velocity.magnitude > 0) {
@@ -34,10 +73,19 @@ public class FlightNPC : MonoBehaviour
         {
             animator.SetBool("Moving", false);
         }
+
+        animator.SetFloat("Sanity", sanity);
     }
     
     private void FixedUpdate()
     {
         
+    }
+
+    IEnumerator setIdle()
+    {
+        yield return new WaitForSeconds(5f);
+        idle = true;
+        pathFinished = false;
     }
 }
