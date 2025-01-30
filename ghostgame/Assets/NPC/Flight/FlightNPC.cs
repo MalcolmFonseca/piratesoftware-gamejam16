@@ -8,6 +8,7 @@ public class FlightNPC : MonoBehaviour
     private float sanity = 1;
 
     Animator animator;
+    SpriteRenderer spriteRenderer;
     Rigidbody2D rigidbody2d;
 
     //Pathfinding
@@ -24,6 +25,7 @@ public class FlightNPC : MonoBehaviour
     private void Start()
     {
         animator = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
         rigidbody2d = GetComponent<Rigidbody2D>();
         path = GetComponent<AIPath>();
     }
@@ -72,6 +74,18 @@ public class FlightNPC : MonoBehaviour
         } else
         {
             animator.SetBool("Moving", false);
+        }
+
+        //direction
+        if (path.targetDirection.x < 0) 
+            /*its obsolete but its the only attribute of aipath that works for this so hopefully this doesnt break
+            desired velocity cant return negative and steeringtarget doesnt update immediately*/
+        {
+            spriteRenderer.flipX = true;
+        }
+        else
+        {
+            spriteRenderer.flipX = false;
         }
 
         animator.SetFloat("Sanity", sanity);
