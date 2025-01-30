@@ -12,17 +12,19 @@ public class FlightNPC : MonoBehaviour
     Rigidbody2D rigidbody2d;
 
     //Pathfinding
-    private bool inChase = false;
+    private bool inChase = true;
     private bool pathFinished = false;
     private bool idle = true;
     private Vector3 wanderTarget;
     private bool onPath = false;
     private AIPath path;
-    private float maxMoveSpeed = 2;
+    private float maxMoveSpeed = 1;
     [SerializeField] private Transform[] targets;
     private int targetIndex = 0;
 
     private GameObject[] npcObjects;
+    private GameObject closestNPC = null;
+    private GameObject playerObject;
 
     private void Start()
     {
@@ -31,15 +33,47 @@ public class FlightNPC : MonoBehaviour
         rigidbody2d = GetComponent<Rigidbody2D>();
         path = GetComponent<AIPath>();
         npcObjects = GameObject.FindGameObjectsWithTag("NPC");
+        playerObject = GameObject.FindGameObjectWithTag("Player");
     }
 
     private void Update()
     {
+        //check if in chase
+        if (calcDistance(playerObject.transform.position)<5)
+        {
+            inChase = true;
+        } else if (inChase)
+        {
+            inChase = false;
+            idle = true;
+        }
+
+        findClosestNPC();
+        //increase sanity if near friends
+        if (calcDistance(closestNPC.transform.position)<5)
+        {
+            changeSanity(.01f * Time.deltaTime);
+        }
+
         //--------------------------AI Movement----------------------------
-        path.maxSpeed = maxMoveSpeed;
+        path.maxSpeed = maxMoveSpeed+sanity;
         if (inChase)//---------------Chased------------------
         {
+            //faster in chase
+            path.maxSpeed = maxMoveSpeed + sanity + .5f;
             //try to find nearest person
+            GameObject closestGuard = findClosestGuard();
+            if (closestGuard != null)
+            {
+                path.destination = closestGuard.transform.position;
+            } else
+            {
+                //all guards dead, just try to run away from ghost
+                Vector3 playerVector = playerObject.transform.position - transform.position;
+                playerVector.x = playerVector.x * -1;
+                playerVector.y = playerVector.y * -1;
+                path.destination = playerVector+transform.position;
+            }
             animator.SetBool("Running", true);
         } else if (onPath)//---------------Path to Room------------------
         {
@@ -66,18 +100,9 @@ public class FlightNPC : MonoBehaviour
                 }
                 else //if low on sanity seek closest friend
                 {
-                    float distance = 100000;
-                    foreach (GameObject npc in npcObjects)
-                    {
-                        float tempDistance = calcDistance(npc.transform.position);
-                        if (tempDistance<distance && tempDistance != 0) 
-                        {
-                            distance = tempDistance;
-                            wanderTarget = npc.transform.position;
-                            wanderTarget.x += (Random.Range(0, 2) * 2 - 1) * 3;
-                            wanderTarget.y += (Random.Range(0, 2) * 2 - 1) * 3;
-                        }
-                    }
+                    wanderTarget = closestNPC.transform.position;
+                    wanderTarget.x += (Random.Range(0, 2) * 2 - 1) * 3;
+                    wanderTarget.y += (Random.Range(0, 2) * 2 - 1) * 3;
                 }
 
                 idle = false;
@@ -137,5 +162,51 @@ public class FlightNPC : MonoBehaviour
     {
         Vector3 distanceVector = point - transform.position;
         return distanceVector.magnitude;
+    }
+
+    private void findClosestNPC()
+    {
+        float distance = 100000;
+        foreach (GameObject npc in npcObjects)
+        {
+            float tempDistance = calcDistance(npc.transform.position);
+            if (tempDistance < distance && tempDistance != 0)
+            {
+                distance = tempDistance;
+                closestNPC = npc;
+            }
+        }
+    }
+
+    private GameObject findClosestGuard() 
+    {
+        float distance = 100000;
+        GameObject closestGuard = null;
+        foreach (GameObject npc in npcObjects)
+        {
+            GuardMove guard = npc.GetComponent<GuardMove>();
+            if (guard != null) 
+            {
+                float tempDistance = calcDistance(npc.transform.position);
+                if (tempDistance < distance && tempDistance != 0)
+                {
+                    distance = tempDistance;
+                    closestGuard = npc;
+                }
+            }
+        }
+
+        return closestGuard;
+    }
+
+    private void changeSanity(float change)
+    {
+        if (sanity + change < 0 || sanity + change > 1)
+        {
+            return;
+        } else
+        {
+            sanity += change;
+        }
     }
 }
