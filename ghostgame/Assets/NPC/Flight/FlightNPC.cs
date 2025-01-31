@@ -234,7 +234,6 @@ public class FlightNPC : MonoBehaviour
         // On leaving the light, start ticking sanity down
         if (collision.gameObject.tag == "Light")
         {
-            Debug.Log("leave ligth");
             if (runningCoroutine != null)
             {
                 StopCoroutine(runningCoroutine);
