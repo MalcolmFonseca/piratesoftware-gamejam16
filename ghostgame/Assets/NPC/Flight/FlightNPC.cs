@@ -9,6 +9,8 @@ public class FlightNPC : MonoBehaviour
 {
     private float sanity = 1f;
     private bool inDarkness = true;
+    private float interactCooldown = 0;
+    GameObject interactableObject;
 
     Animator animator;
     SpriteRenderer spriteRenderer;
@@ -53,6 +55,8 @@ public class FlightNPC : MonoBehaviour
 
     private void Update()
     {
+        interactCooldown -= Time.deltaTime;
+
         if (sanity == 0)
         {
             //die
@@ -148,6 +152,11 @@ public class FlightNPC : MonoBehaviour
                 }
 
                 idle = false;
+                if (interactCooldown <= 0 && interactableObject != null)
+                {
+                    interactCooldown = 10;
+                    GameEvents.instance.Interact(interactableObject);
+                }
             } else
             {
                 //roam to random point
@@ -243,9 +252,12 @@ public class FlightNPC : MonoBehaviour
 
     private void ChangeSanity(float change)
     {
-        if (sanity + change < 0 || sanity + change > 1)
+        if (sanity + change < 0)
         {
-            return;
+            sanity = 0;
+        } else if (sanity + change > 1)
+        {
+            sanity = 1;
         }
         else
         {
@@ -258,6 +270,11 @@ public class FlightNPC : MonoBehaviour
         if (collision.gameObject.tag == "Light")
         {
             inDarkness = false;
+            interactableObject = collision.gameObject;
+        }
+        if (collision.tag == "Interact")
+        {
+            interactableObject = collision.gameObject;
         }
     }
 

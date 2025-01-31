@@ -21,6 +21,12 @@ public class Clock : MonoBehaviour
 
     void Update()
     {
+        //check if time up
+        if (totalTime == 36000)
+        {
+            GameEvents.instance.LoseGame();
+        }
+
         elapsedTime += Time.deltaTime * timeScale;
         totalTime += Time.deltaTime * timeScale;
 
@@ -59,9 +65,5 @@ public class Clock : MonoBehaviour
                 npc.changePath();
             }
         }
-    }
-    public float getTotalTime()
-    {
-        return totalTime;
     }
 }

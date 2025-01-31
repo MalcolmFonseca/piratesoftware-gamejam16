@@ -383,6 +383,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targets: []
   clip: {fileID: 8300000, guid: 524e51f5b84e88340a3693f635487fed, type: 3}
+  deadPrefab: {fileID: 2582490768774636317, guid: f78767a64d30926499bc30455e32651b, type: 3}
 --- !u!50 &6940403362175856242
 Rigidbody2D:
   serializedVersion: 5
