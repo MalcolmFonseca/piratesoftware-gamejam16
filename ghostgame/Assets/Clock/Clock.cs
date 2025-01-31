@@ -3,9 +3,10 @@ using UnityEngine;
 
 public class Clock : MonoBehaviour
 {
+    private float totalTime = 0f;
     private float elapsedTime = 72000f;
     private TMP_Text clockText;
-    private float timeScale = 100f;
+    private float timeScale = 60f;
     private GameObject[] npcObjects;
     private float prevHour;
     private AudioSource source;
@@ -21,6 +22,7 @@ public class Clock : MonoBehaviour
     void Update()
     {
         elapsedTime += Time.deltaTime * timeScale;
+        totalTime += Time.deltaTime * timeScale;
 
         //update text
         int hours = Mathf.FloorToInt(elapsedTime/3600f);
@@ -57,5 +59,9 @@ public class Clock : MonoBehaviour
                 npc.changePath();
             }
         }
+    }
+    public float getTotalTime()
+    {
+        return totalTime;
     }
 }

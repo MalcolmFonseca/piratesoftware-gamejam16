@@ -65,7 +65,7 @@ public class UIManager : MonoBehaviour
         DisableUI();
         winOrLoseText.text = "GAME OVER";
         yourTime.text = "";
-        yourScares.text = "SCARE COUNT: " + yourScares.ToString();
+        yourScares.text = "SCARE COUNT: " + scareCount.ToString();
     }
 
     void Win()
@@ -73,7 +73,7 @@ public class UIManager : MonoBehaviour
         DisableUI();
         winOrLoseText.text = "YOU WON!";
         yourTime.text = "YOUR TIME: " + ((Mathf.Round(timePassed * 100)) / 100);
-        yourScares.text = "SCARE COUNT: " + yourScares.ToString();
+        yourScares.text = "SCARE COUNT: " + scareCount.ToString();
     }
 
     void DisableUI()
