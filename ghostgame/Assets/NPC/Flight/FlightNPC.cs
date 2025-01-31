@@ -57,6 +57,7 @@ public class FlightNPC : MonoBehaviour
         {
             //die
             Instantiate(deadPrefab, transform.position, Quaternion.identity);
+            GameEvents.instance.NpcDead(gameObject);
             Object.Destroy(this.gameObject);
         }
 
