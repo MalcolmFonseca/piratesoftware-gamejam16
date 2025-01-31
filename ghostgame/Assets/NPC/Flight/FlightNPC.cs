@@ -27,8 +27,6 @@ public class FlightNPC : MonoBehaviour
     private GameObject playerObject;
     private PlayerMovement player;
 
-    Coroutine runningCoroutine;
-
     private AudioSource source;
     [SerializeField] private AudioClip clip;
 
@@ -46,8 +44,9 @@ public class FlightNPC : MonoBehaviour
 
     private void Update()
     {
-        //check if in chase
-        if (calcDistance(playerObject.transform.position)<5 && !player.isInvisible)
+        //check if ghost in vision
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, player.transform.position - transform.position, 5f, 6);
+        if (hit && hit.collider.tag == "Player" && !player.isInvisible)
         {
             if (!inChase)
             {
