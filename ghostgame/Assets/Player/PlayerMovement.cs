@@ -57,6 +57,16 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     GameObject hitBox;
 
+    // Sound
+    [SerializeField]
+    AudioSource whoomp;
+    [SerializeField]
+    AudioSource dmg;
+    [SerializeField]
+    AudioSource whoosh;
+
+
+
 
     // ----------------- Setup ------------------------------
     void Awake()
@@ -162,6 +172,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (canTakeDmg) { 
             health -= 10;
+            dmg.Play();
 
             if (health <= 0)
             {
@@ -229,6 +240,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (!invisCooldown)
         {
+            whoomp.Play();
             isInvisible = true;
             TransparencyChange(0.27f);
             ManageColliders(isInvisible);
@@ -253,6 +265,7 @@ public class PlayerMovement : MonoBehaviour
         ManageColliders(isInvisible);
         spriteRenderer.sortingLayerName = "Collisions";
         Instantiate(hitBox, gameObject.transform);
+        whoosh.Play();
         anim.SetTrigger("boo");
     }
 
