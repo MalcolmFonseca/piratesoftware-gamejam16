@@ -86,8 +86,7 @@ public class UIManager : MonoBehaviour
 
     public void RestartBtn()
     {
-        //SceneManager.LoadScene("MainScene");
-        Debug.Log("Button Working");
+        SceneManager.LoadScene("MainScene");
     }
 
     void RemoveNPC(GameObject npc)

@@ -101,7 +101,7 @@ public class GuardMove : MonoBehaviour
             // Checking if in patrol/angry state, if can see ghost, then chase
             if (currentState != StateMachine.Scared && currentState != StateMachine.Dead)
             {
-                Vector2 direction = ghost.transform.position - transform.position;
+                Vector2 direction = (ghost.transform.position + new Vector3(0.08838356f, 0.1350673f, 0)) - transform.position;
 
                 // Call player damage event on raycast hit
                 RaycastHit2D playerHit = Physics2D.Raycast(transform.position, direction, 5f, playerLayer);
@@ -114,6 +114,7 @@ public class GuardMove : MonoBehaviour
                 {
                     currentState = StateMachine.Patrol;
                 }
+
             }
         }
 
