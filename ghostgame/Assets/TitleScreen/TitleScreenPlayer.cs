@@ -1,5 +1,6 @@
 using UnityEngine;
 using Pathfinding;
+using System.Collections;
 
 public class TitleScreenPlayer : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class TitleScreenPlayer : MonoBehaviour
     private AIPath path;
     private GameObject[] npcObjects;
     private GameObject closestNPC = null;
+    private bool left = true;
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -17,6 +19,7 @@ public class TitleScreenPlayer : MonoBehaviour
         rigidbody2d = GetComponent<Rigidbody2D>();
         npcObjects = GameObject.FindGameObjectsWithTag("NPC");
         path = GetComponent<AIPath>();
+        StartCoroutine(changeSide());
     }
 
     void Update()
@@ -24,6 +27,17 @@ public class TitleScreenPlayer : MonoBehaviour
         findClosestNPC();
         path.maxSpeed = 2f;
         path.destination = closestNPC.transform.position;
+
+        if (path.targetDirection.x < 0)
+        /*its obsolete but its the only attribute of aipath that works for this so hopefully this doesnt break
+        desired velocity cant return negative and steeringtarget doesnt update immediately*/
+        {
+            spriteRenderer.flipX = false;
+        }
+        else
+        {
+            spriteRenderer.flipX = true;
+        }
     }
 
     private float calcDistance(Vector3 point)
@@ -44,5 +58,19 @@ public class TitleScreenPlayer : MonoBehaviour
                 closestNPC = npc;
             }
         }
+    }
+
+    IEnumerator changeSide()
+    {
+        yield return new WaitForSeconds(4f);
+        if (left)
+        {
+            transform.position = new Vector2(9, 0);
+        } else
+        {
+            transform.position = new Vector2(-9, 0);
+        }
+        left = !left;
+        StartCoroutine(changeSide());
     }
 }

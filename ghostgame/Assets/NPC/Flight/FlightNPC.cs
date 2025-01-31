@@ -28,7 +28,6 @@ public class FlightNPC : MonoBehaviour
     private GameObject[] npcObjects;
     private GameObject closestNPC = null;
     private GameObject playerObject;
-    private PlayerMovement player;
     LayerMask playerLayer;
     LayerMask obstacleLayer;
 
@@ -37,6 +36,7 @@ public class FlightNPC : MonoBehaviour
 
     Slider slider;
 
+    [SerializeField] GameObject deadPrefab;
     private void Start()
     {
         animator = GetComponent<Animator>();
@@ -45,7 +45,6 @@ public class FlightNPC : MonoBehaviour
         path = GetComponent<AIPath>();
         npcObjects = GameObject.FindGameObjectsWithTag("NPC");
         playerObject = GameObject.FindGameObjectWithTag("Player");
-        player = playerObject.GetComponent<PlayerMovement>();
         source = GetComponent<AudioSource>();
         playerLayer = LayerMask.GetMask("Player");
         obstacleLayer = LayerMask.GetMask("Obstacle");
@@ -57,12 +56,15 @@ public class FlightNPC : MonoBehaviour
         if (sanity == 0)
         {
             //die
+            Instantiate(deadPrefab, transform.position, Quaternion.identity);
+            Object.Destroy(this.gameObject);
         }
-        
+
         //check if ghost in vision
-        RaycastHit2D playerHit = Physics2D.Raycast(transform.position, player.transform.position - transform.position, 8f, playerLayer);
-        RaycastHit2D obstacleHit = Physics2D.Raycast(transform.position, player.transform.position - transform.position, 8f, obstacleLayer);
-        if (playerHit && playerHit.collider.tag == "Player" && !playerHit.collider.isTrigger && !player.isInvisible && !obstacleHit)
+        Vector3 playerPosition = playerObject.transform.position + new Vector3(0,.1f,0);
+        RaycastHit2D playerHit = Physics2D.Raycast(transform.position, playerPosition - transform.position, 8f, playerLayer);
+        RaycastHit2D obstacleHit = Physics2D.Raycast(transform.position, playerPosition - transform.position, 8f, obstacleLayer);
+        if (playerHit && playerHit.collider.tag == "Player" && !playerHit.collider.isTrigger && !obstacleHit)
         {
             if (!inChase)
             {
