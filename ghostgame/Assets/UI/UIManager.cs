@@ -16,7 +16,10 @@ public class UIManager : MonoBehaviour
     Text winOrLoseText;
     [SerializeField]
     Text yourTime;
+    [SerializeField]
+    Text yourScares;
     float timePassed;
+    int scareCount;
 
     private List<GameObject> npcList = new List<GameObject>();
 
@@ -39,6 +42,7 @@ public class UIManager : MonoBehaviour
         menu.SetActive(false);
 
         timePassed = 0;
+        scareCount = 0;
     }
 
     private void Update()
@@ -60,6 +64,8 @@ public class UIManager : MonoBehaviour
     {
         DisableUI();
         winOrLoseText.text = "GAME OVER";
+        yourTime.text = "";
+        yourScares.text = "SCARE COUNT: " + yourScares.ToString();
     }
 
     void Win()
@@ -67,7 +73,7 @@ public class UIManager : MonoBehaviour
         DisableUI();
         winOrLoseText.text = "YOU WON!";
         yourTime.text = "YOUR TIME: " + ((Mathf.Round(timePassed * 100)) / 100);
-        
+        yourScares.text = "SCARE COUNT: " + yourScares.ToString();
     }
 
     void DisableUI()
@@ -88,6 +94,7 @@ public class UIManager : MonoBehaviour
     {
         if (npcList.Contains(npc)) { 
             npcList.Remove(npc);
+            scareCount++;
         } else
         {
             Debug.Log("Removal Failed");
