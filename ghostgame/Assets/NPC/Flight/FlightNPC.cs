@@ -3,6 +3,7 @@ using Pathfinding;
 using System.Collections;
 using System.IO;
 using Unity.VisualScripting;
+using UnityEngine.UI;
 
 public class FlightNPC : MonoBehaviour
 {
@@ -34,6 +35,8 @@ public class FlightNPC : MonoBehaviour
     private AudioSource source;
     [SerializeField] private AudioClip clip;
 
+    Slider slider;
+
     private void Start()
     {
         animator = GetComponent<Animator>();
@@ -46,10 +49,16 @@ public class FlightNPC : MonoBehaviour
         source = GetComponent<AudioSource>();
         playerLayer = LayerMask.GetMask("Player");
         obstacleLayer = LayerMask.GetMask("Obstacle");
+        slider = gameObject.GetComponentInChildren<Slider>();
     }
 
     private void Update()
     {
+        if (sanity == 0)
+        {
+            //die
+        }
+        
         //check if ghost in vision
         RaycastHit2D playerHit = Physics2D.Raycast(transform.position, player.transform.position - transform.position, 8f, playerLayer);
         RaycastHit2D obstacleHit = Physics2D.Raycast(transform.position, player.transform.position - transform.position, 8f, obstacleLayer);
@@ -60,6 +69,7 @@ public class FlightNPC : MonoBehaviour
                 //play scream sound
                 source.PlayOneShot(clip);
             }
+            ChangeSanity(-.05f * Time.deltaTime);
             inChase = true;
         } else if (inChase)
         {
@@ -77,11 +87,11 @@ public class FlightNPC : MonoBehaviour
         //change sanity with lighting
         if (inDarkness)
         {
-            ChangeSanity(-.01f);
+            ChangeSanity(-.01f * Time.deltaTime);
         }
         else
         {
-            ChangeSanity(.01f);
+            ChangeSanity(.01f * Time.deltaTime);
         }
 
         //--------------------------AI Movement----------------------------
@@ -238,6 +248,7 @@ public class FlightNPC : MonoBehaviour
         {
             sanity += change;
         }
+        slider.value = sanity;
     }
     private void OnTriggerStay2D(Collider2D collision)
     {

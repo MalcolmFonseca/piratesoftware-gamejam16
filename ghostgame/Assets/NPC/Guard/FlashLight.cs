@@ -44,7 +44,7 @@ public class FlashLight : MonoBehaviour
         // Call player damage event on raycast hit
         RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, 4f, playerLayer);
         RaycastHit2D obstacleHit = Physics2D.Raycast(transform.position, direction, 4f, obstacleLayer);
-        if (hit && hit.collider.tag == "Player" && timePassed >= hitInterval)
+        if (hit && hit.collider.tag == "Player" && timePassed >= hitInterval && !obstacleHit)
         {
             timePassed = 0f;
             GameEvents.instance.TakeDamage();
