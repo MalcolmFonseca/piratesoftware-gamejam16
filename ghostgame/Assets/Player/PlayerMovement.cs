@@ -181,6 +181,7 @@ public class PlayerMovement : MonoBehaviour
                 canTakeDmg = false;
                 rigidBody2d.constraints = RigidbodyConstraints2D.FreezePosition;
                 rigidBody2d.constraints = RigidbodyConstraints2D.FreezeRotation;
+                rigidBody2d.bodyType = RigidbodyType2D.Static;
                 boxCollider2d.enabled = false;
                 GameEvents.instance.LoseGame(); // call game over event
             }
@@ -256,10 +257,10 @@ public class PlayerMovement : MonoBehaviour
         if (inWall())
         {
             canMove = false;
-            boxCollider2d.enabled = false;
             FindPosition();
         }
         yield return new WaitUntil(() => canMove);
+        boxCollider2d.enabled = true;
         isInvisible = false;
         TransparencyChange(1f);
         ManageColliders(isInvisible);
@@ -360,6 +361,7 @@ public class PlayerMovement : MonoBehaviour
         // call duration event
         GameEvents.instance.StartInvisibility(2f);
         yield return new WaitForSeconds(2f); // invisibility duration
+        boxCollider2d.enabled = false;
         StartCoroutine(RevokeInvisibility());
         yield return new WaitUntil(() => !inWall());
         // call cooldown event

@@ -1,9 +1,9 @@
 using UnityEngine;
 
-public class Bookshelf : MonoBehaviour
+public class KitchenInteract : MonoBehaviour
 {
     [SerializeField]
-    Rigidbody2D book;
+    Rigidbody2D item;
     [SerializeField]
     Vector2 throwDirection;
     [SerializeField]
@@ -19,14 +19,13 @@ public class Bookshelf : MonoBehaviour
     private void Start()
     {
         // subscribe
-        GameEvents.instance.onInteract += ThrowBook;
-
+        GameEvents.instance.onInteract += ThrowItem;
     }
 
     private void OnDestroy()
     {
         // unsubscribe
-        GameEvents.instance.onInteract -= ThrowBook;
+        GameEvents.instance.onInteract -= ThrowItem;
     }
 
     private void Update()
@@ -41,15 +40,15 @@ public class Bookshelf : MonoBehaviour
         }
     }
 
-    private void ThrowBook(GameObject gameObject)
+    void ThrowItem(GameObject gameObject)
     {
-
-        if(gameObject == this.gameObject)
+        if (gameObject == this.gameObject) 
         {
-            // Instantiate Book
-            Rigidbody2D bookInstance;
-            bookInstance = Instantiate(book, this.gameObject.transform) as Rigidbody2D;
-            bookInstance.AddForce(throwDirection * 350f);
+
+            Rigidbody2D plateInstance;
+            plateInstance = Instantiate(item, this.gameObject.transform) as Rigidbody2D;
+            plateInstance.AddForce(throwDirection * 550f);
+
 
             // Enable hit trigger, disable it 1s later through update function for hit box
             hitCollider.enabled = true;
@@ -57,5 +56,4 @@ public class Bookshelf : MonoBehaviour
         }
 
     }
-
 }
