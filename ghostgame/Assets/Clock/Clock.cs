@@ -8,11 +8,14 @@ public class Clock : MonoBehaviour
     private float timeScale = 100f;
     private GameObject[] npcObjects;
     private float prevHour;
+    private AudioSource source;
+    [SerializeField]private AudioClip clip;
 
     void Start()
     {
         clockText = GetComponent<TMP_Text>();
         prevHour = Mathf.FloorToInt(elapsedTime / 3600f);
+        source = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -41,6 +44,9 @@ public class Clock : MonoBehaviour
 
     private void AlertHourChange()
     {
+        //play hour change sound
+        source.PlayOneShot(clip);
+
         npcObjects = GameObject.FindGameObjectsWithTag("NPC");
         //trigger each npc to seek next room
         foreach (GameObject npcObject in npcObjects) 

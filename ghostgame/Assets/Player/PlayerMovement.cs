@@ -48,7 +48,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     BoxCollider2D boxCollider2d;
     SpriteRenderer spriteRenderer;
-    bool isInvisible;
+    public bool isInvisible;
     LayerMask wallLayer;
     [SerializeField]
     float checkRadius;

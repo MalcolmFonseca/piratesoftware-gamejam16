@@ -25,8 +25,12 @@ public class FlightNPC : MonoBehaviour
     private GameObject[] npcObjects;
     private GameObject closestNPC = null;
     private GameObject playerObject;
+    private PlayerMovement player;
 
     Coroutine runningCoroutine;
+
+    private AudioSource source;
+    [SerializeField] private AudioClip clip;
 
     private void Start()
     {
@@ -36,13 +40,20 @@ public class FlightNPC : MonoBehaviour
         path = GetComponent<AIPath>();
         npcObjects = GameObject.FindGameObjectsWithTag("NPC");
         playerObject = GameObject.FindGameObjectWithTag("Player");
+        player = playerObject.GetComponent<PlayerMovement>();
+        source = GetComponent<AudioSource>();
     }
 
     private void Update()
     {
         //check if in chase
-        if (calcDistance(playerObject.transform.position)<5)
+        if (calcDistance(playerObject.transform.position)<5 && !player.isInvisible)
         {
+            if (!inChase)
+            {
+                //play scream sound
+                source.PlayOneShot(clip);
+            }
             inChase = true;
         } else if (inChase)
         {
@@ -206,48 +217,10 @@ public class FlightNPC : MonoBehaviour
         if (sanity + change < 0 || sanity + change > 1)
         {
             return;
-        } else
+        }
+        else
         {
             sanity += change;
-        }
-    }
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        // Interact object thrown
-        if (collision.gameObject.tag == "SanityHit")
-        {
-            ChangeSanity(-.1f);
-        }
-        else if (collision.gameObject.tag == "Light")     // Entering lighting
-        {
-            Debug.Log("enter ligth");
-            if (runningCoroutine != null)
-            {
-                StopCoroutine(runningCoroutine);
-            }
-            runningCoroutine = StartCoroutine(LightingSanityChange(.05f));
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        // On leaving the light, start ticking sanity down
-        if (collision.gameObject.tag == "Light")
-        {
-            if (runningCoroutine != null)
-            {
-                StopCoroutine(runningCoroutine);
-            }
-            StartCoroutine(LightingSanityChange(-.05f));
-        }
-    }
-
-    IEnumerator LightingSanityChange(float change)
-    {
-        while (true)
-        {
-            yield return new WaitForSeconds(1f);
-            ChangeSanity(change);
         }
     }
 }
