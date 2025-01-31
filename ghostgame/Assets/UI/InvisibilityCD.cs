@@ -10,7 +10,7 @@ public class InvisibilityCD : MonoBehaviour
     [SerializeField]
     private Image imageCD;
     [SerializeField]
-    private TMP_Text textCD;
+    Text textCD;
     [SerializeField]
     Slider slider;
 
@@ -44,12 +44,10 @@ public class InvisibilityCD : MonoBehaviour
 
     IEnumerator Cooldown(float cooldown)
     {
-        Debug.Log("here 10");
         textCD.gameObject.SetActive(true);
         imageCD.fillAmount = 1;
 
         float timePassed = 0;
-        Debug.Log("here11");
         while (timePassed < cooldown)
         {
             textCD.text = Mathf.RoundToInt(cooldown - timePassed).ToString();
@@ -58,7 +56,6 @@ public class InvisibilityCD : MonoBehaviour
             yield return null;
         }
 
-        Debug.Log("here 12");
         imageCD.fillAmount = 0;
         textCD.gameObject.SetActive(false);
 

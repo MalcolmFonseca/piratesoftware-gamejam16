@@ -186,6 +186,7 @@ public class GuardMove : MonoBehaviour
     IEnumerator DestroyDead()
     {
         yield return new WaitForSeconds(1f);
+        GameEvents.instance.NpcDead(gameObject);
         Destroy(gameObject);
     }
 

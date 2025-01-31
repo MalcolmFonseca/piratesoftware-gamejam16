@@ -9,7 +9,7 @@ public class InteractCD : MonoBehaviour
     [SerializeField]
     private Image imageCD;
     [SerializeField]
-    private TMP_Text textCD;
+    Text textCD;
     [SerializeField]
     private GameObject interactIcon;
 

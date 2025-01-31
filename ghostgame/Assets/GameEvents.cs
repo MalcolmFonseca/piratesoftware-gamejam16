@@ -57,6 +57,14 @@ public class GameEvents : MonoBehaviour
     }
 
     //----------------------------------------------------------------------------------------------------------------------------------
+    // NPC destroyed calls this
+    public event Action<GameObject> onNPCDestroy;
+    public void NpcDead(GameObject npc)
+    {
+        onNPCDestroy?.Invoke(npc);
+    }
+
+    //----------------------------------------------------------------------------------------------------------------------------------
     // Player dies
     public event Action onLoseGame;
     public void LoseGame()
@@ -69,6 +77,6 @@ public class GameEvents : MonoBehaviour
     public event Action onWinGame;
     public void Winner()
     {
-
+        onWinGame?.Invoke();
     }
 }

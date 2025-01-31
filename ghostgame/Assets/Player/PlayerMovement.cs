@@ -169,6 +169,8 @@ public class PlayerMovement : MonoBehaviour
                 canMove = false;
                 canTakeDmg = false;
                 rigidBody2d.constraints = RigidbodyConstraints2D.FreezePosition;
+                rigidBody2d.constraints = RigidbodyConstraints2D.FreezeRotation;
+                boxCollider2d.enabled = false;
                 GameEvents.instance.LoseGame(); // call game over event
             }
         }
@@ -178,7 +180,7 @@ public class PlayerMovement : MonoBehaviour
     // ----------------------- Interact Event 'E' ------------------------
     private void Interact(InputAction.CallbackContext context)
     {
-        if (interactableObject != null && !onCooldown)
+        if (isInvisible && interactableObject != null && !onCooldown)
         {
             GameEvents.instance.Interact(interactableObject);
             anim.SetTrigger("interact");
@@ -193,9 +195,9 @@ public class PlayerMovement : MonoBehaviour
     }
 
     // Sets interactableObject to be sent as the parameter for the event, to be checked by all interactable objects against themselves
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.tag == "Interact")
+        if (isInvisible && collision.tag == "Interact")
         {
             interactableObject = collision.gameObject;
             // can add event that instead of disappearing from ui, just adjusts the transparency of the icon part only
@@ -346,14 +348,10 @@ public class PlayerMovement : MonoBehaviour
         GameEvents.instance.StartInvisibility(2f);
         yield return new WaitForSeconds(2f); // invisibility duration
         StartCoroutine(RevokeInvisibility());
-        Debug.Log("Here one");
         yield return new WaitUntil(() => !inWall());
-        Debug.Log("here 2");
         // call cooldown event
         GameEvents.instance.StartCooldown(2f);
-        Debug.Log("here 3");
         yield return new WaitForSeconds(2f);
-        Debug.Log("Here 4");
         invisCooldown = false;
     }
 
