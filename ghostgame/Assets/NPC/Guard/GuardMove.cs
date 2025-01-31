@@ -24,7 +24,8 @@ public class GuardMove : MonoBehaviour
     Animator anim;
     SpriteRenderer spriteRenderer;
     public bool isAngry;
-    LayerMask wallLayer;
+    LayerMask playerLayer;
+    LayerMask obstacleLayer;
     BoxCollider2D collider;
     Rigidbody2D rigidBody2d;
 
@@ -52,7 +53,8 @@ public class GuardMove : MonoBehaviour
         anim = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         rigidBody2d = GetComponent<Rigidbody2D>();
-        wallLayer = LayerMask.GetMask("Obstacle");
+        playerLayer = LayerMask.GetMask("Player");
+        obstacleLayer = LayerMask.GetMask("Obstacle");
         timePassed = 0;
         inDarkness = true;
     }
@@ -102,8 +104,9 @@ public class GuardMove : MonoBehaviour
                 Vector2 direction = ghost.transform.position - transform.position;
 
                 // Call player damage event on raycast hit
-                RaycastHit2D playerHit = Physics2D.Raycast(transform.position, direction, 5f, wallLayer);
-                if (playerHit && playerHit.collider.tag == "Player" && !playerHit.collider.isTrigger)
+                RaycastHit2D playerHit = Physics2D.Raycast(transform.position, direction, 5f, playerLayer);
+                RaycastHit2D obstacleHit = Physics2D.Raycast(transform.position, direction, 5f, obstacleLayer);
+                if (playerHit && playerHit.collider.tag == "Player" && !playerHit.collider.isTrigger && !obstacleHit)
                 {
                     currentState = StateMachine.Chase;
                 }

@@ -151,7 +151,7 @@ GameObject:
   - component: {fileID: 1039617305937371831}
   - component: {fileID: 40598950469598160}
   - component: {fileID: 7582778241075248668}
-  m_Layer: 6
+  m_Layer: 10
   m_Name: Ghost
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -267,7 +267,7 @@ MonoBehaviour:
   maxBoundaryObj: {fileID: 0}
   minBoundaryObj: {fileID: 0}
   boxCollider2d: {fileID: 7582778241075248668}
-  triggerCollider: {fileID: 0}
+  isInvisible: 0
   checkRadius: 0.5
   hitBox: {fileID: 6531042831325594206, guid: f64d2fab7af42024d8bf8a2319b8d834, type: 3}
 --- !u!50 &40598950469598160

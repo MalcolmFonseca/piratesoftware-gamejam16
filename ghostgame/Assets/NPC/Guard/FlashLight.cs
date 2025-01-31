@@ -10,14 +10,16 @@ public class FlashLight : MonoBehaviour
 
     GuardMove guard;
     bool angry;
-    LayerMask wallLayer;
+    LayerMask playerLayer;
+    LayerMask obstacleLayer;
     float timePassed = 0f;
     float hitInterval = 1f;
 
     private void Awake()
     {
         guard = parent.GetComponent<GuardMove>();
-        wallLayer = LayerMask.GetMask("Obstacle");
+        playerLayer = LayerMask.GetMask("Player");
+        obstacleLayer = LayerMask.GetMask("Obstacle");
     }
 
 
@@ -40,8 +42,9 @@ public class FlashLight : MonoBehaviour
 
 
         // Call player damage event on raycast hit
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, 4f, wallLayer);
-        if(hit && hit.collider.tag == "Player" && timePassed >= hitInterval)
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, 4f, playerLayer);
+        RaycastHit2D obstacleHit = Physics2D.Raycast(transform.position, direction, 4f, obstacleLayer);
+        if (hit && hit.collider.tag == "Player" && timePassed >= hitInterval)
         {
             timePassed = 0f;
             GameEvents.instance.TakeDamage();

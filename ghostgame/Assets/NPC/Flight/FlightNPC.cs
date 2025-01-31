@@ -2,10 +2,12 @@ using UnityEngine;
 using Pathfinding;
 using System.Collections;
 using System.IO;
+using Unity.VisualScripting;
 
 public class FlightNPC : MonoBehaviour
 {
     private float sanity = 1f;
+    private bool inDarkness = true;
 
     Animator animator;
     SpriteRenderer spriteRenderer;
@@ -26,6 +28,8 @@ public class FlightNPC : MonoBehaviour
     private GameObject closestNPC = null;
     private GameObject playerObject;
     private PlayerMovement player;
+    LayerMask playerLayer;
+    LayerMask obstacleLayer;
 
     private AudioSource source;
     [SerializeField] private AudioClip clip;
@@ -40,13 +44,16 @@ public class FlightNPC : MonoBehaviour
         playerObject = GameObject.FindGameObjectWithTag("Player");
         player = playerObject.GetComponent<PlayerMovement>();
         source = GetComponent<AudioSource>();
+        playerLayer = LayerMask.GetMask("Player");
+        obstacleLayer = LayerMask.GetMask("Obstacle");
     }
 
     private void Update()
     {
         //check if ghost in vision
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, player.transform.position - transform.position, 5f, 6);
-        if (hit && hit.collider.tag == "Player" && !player.isInvisible)
+        RaycastHit2D playerHit = Physics2D.Raycast(transform.position, player.transform.position - transform.position, 8f, playerLayer);
+        RaycastHit2D obstacleHit = Physics2D.Raycast(transform.position, player.transform.position - transform.position, 8f, obstacleLayer);
+        if (playerHit && playerHit.collider.tag == "Player" && !playerHit.collider.isTrigger && !player.isInvisible && !obstacleHit)
         {
             if (!inChase)
             {
@@ -65,6 +72,16 @@ public class FlightNPC : MonoBehaviour
         if (calcDistance(closestNPC.transform.position)<5)
         {
             ChangeSanity(.01f * Time.deltaTime);
+        }
+
+        //change sanity with lighting
+        if (inDarkness)
+        {
+            ChangeSanity(-.01f);
+        }
+        else
+        {
+            ChangeSanity(.01f);
         }
 
         //--------------------------AI Movement----------------------------
@@ -220,6 +237,21 @@ public class FlightNPC : MonoBehaviour
         else
         {
             sanity += change;
+        }
+    }
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Light")
+        {
+            inDarkness = false;
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Light")
+        {
+            inDarkness = true;
         }
     }
 }
